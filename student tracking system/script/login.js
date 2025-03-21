@@ -1,11 +1,12 @@
-document.querySelectorAll(".role-option").forEach((option) => {
-    option.addEventListener("click", function () {
-      document
-        .querySelectorAll(".role-option")
-        .forEach((item) => item.classList.remove("active"));
-      this.classList.add("active");
-    });
+document.querySelectorAll(".role-option-label input").forEach((input) => {
+  input.addEventListener("change", function () {
+    document
+      .querySelectorAll(".role-option-label span")
+      .forEach((span) => span.classList.remove("active"));
+
+    this.nextElementSibling.classList.add("active");
   });
+});
 
   document
     .getElementById("togglePassword")

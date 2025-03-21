@@ -119,3 +119,47 @@ align-items: center;
 gap: 30px;
 }
 }
+
+.role-option-label {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #504b38;
+  padding: 5px 10px;
+  position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+.role-option-label input {
+  display: none; /* إخفاء الـ radio button */
+}
+
+.role-option-label span {
+  display: inline-block;
+  position: relative;
+}
+
+.role-option-label span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0%;
+  height: 3px;
+  background-color: #504b38;
+  transition: width 0.3s ease-in-out;
+}
+
+.role-option-label:hover span {
+  color: #969078;
+}
+
+.role-option-label input:checked + span::after,
+.role-option-label:hover span::after {
+  width: 100%;
+}
+
+.role-option-label input:checked + span {
+  color: #504b38;
+  font-weight: bold;
+}
