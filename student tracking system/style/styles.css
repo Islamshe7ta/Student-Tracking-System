@@ -1,0 +1,79 @@
+/* styles.css */
+body {
+    background-color: #f8f3d9ce;
+    font-family: "Roboto", sans-serif;
+    color: #504b38;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #504b38;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+}
+
+.btn {
+    background-color: #504b38;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+    background-color: #969078;
+    box-shadow: 0px 5px 15px #504b38c7;
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(1.1);
+    transition: transform 0.1s ease-in-out;
+}
+
+.form-container {
+    background-color: #ebe5c2;
+    padding: 30px;
+    margin: 50px auto;
+    width: 350px;
+    box-shadow: 0px 4px 10px #504b38c0;
+    border-radius: 10px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeIn 1.5s ease-in-out forwards;
+    text-align: left;
+}
+
+.form-container h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
