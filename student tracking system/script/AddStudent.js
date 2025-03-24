@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let isValid = true;
 
         inputs.forEach((input) => {
-            const feedback = input.nextElementSibling; // `div.invalid-feedback`
+            const feedback = input.nextElementSibling; 
             if (!feedback || !feedback.classList.contains("invalid-feedback")) return;
 
             if (input.type === "text" || input.type === "email" || input.type === "date") {
@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Validate gender selection
         const genderInputs = document.querySelectorAll("input[name='gender']");
         const genderFeedback = genderInputs[genderInputs.length - 1].parentElement.nextElementSibling;
 
@@ -60,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!isValid) {
-            event.preventDefault(); // Prevent form submission if validation fails
+            event.preventDefault(); 
             return;
         }
 
