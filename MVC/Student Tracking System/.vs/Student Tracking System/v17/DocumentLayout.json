@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\omarw\\Downloads\\Project\\Student Tracking System\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{47A4B200-316E-443B-9100-46C72CBAB2C0}|Student Tracking System\\Student Tracking System.csproj|c:\\users\\omarw\\downloads\\project\\student tracking system\\student tracking system\\views\\accounts\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{47A4B200-316E-443B-9100-46C72CBAB2C0}|Student Tracking System\\Student Tracking System.csproj|solutionrelative:student tracking system\\views\\accounts\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\omarw\\Downloads\\Project\\Student Tracking System\\Student Tracking System\\Views\\Accounts\\Login.cshtml",
+              "RelativeDocumentMoniker": "Student Tracking System\\Views\\Accounts\\Login.cshtml",
+              "ToolTip": "C:\\Users\\omarw\\Downloads\\Project\\Student Tracking System\\Student Tracking System\\Views\\Accounts\\Login.cshtml",
+              "RelativeToolTip": "Student Tracking System\\Views\\Accounts\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-14T10:44:17.27Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
