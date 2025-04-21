@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<StudentTrackingSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "Student List";
+}
+
+<h2>Students</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.FullName</td>
+                <td>@student.EmailAddress</td>
+                <td>@student.Grade</td>
+                <td>
+                    <a href="@Url.Action("Details", "Student", new { id = student.Id })">Details</a> |
+                    <a href="@Url.Action("Edit", "Student", new { id = student.Id })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Student", new { id = student.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "Student")" class="btn btn-primary">Add New Student</a>
