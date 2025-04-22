@@ -15,8 +15,9 @@ namespace StudentTrackingSystem
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+            builder.Services.AddScoped<ITeatcherRepository, TeatcherRepository>();
 
             // Ensure the 'UseSqlServer' method is available by adding the correct using directive
             builder.Services.AddDbContext<AppDbContext>(options =>

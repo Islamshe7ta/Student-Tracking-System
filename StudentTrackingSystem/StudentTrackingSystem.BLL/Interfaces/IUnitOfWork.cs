@@ -8,7 +8,8 @@ namespace StudentTrackingSystem.BLL.Interfaces
 {
     public interface IUnitOfWork
     {
-        IStudentRepository StudentRepository { get; }   // لاحظ اسم الـ Property
+        IStudentRepository StudentRepository { get; }
+        ITeatcherRepository TeatcherRepository { get; } // Add this line to define the missing property  
         Task<int> CompleteAsync();
     }
 

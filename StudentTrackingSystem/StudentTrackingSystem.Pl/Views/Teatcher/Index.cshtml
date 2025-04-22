@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<StudentTrackingSystem.DAL.Models.Teatcher>
+
+@{
+    ViewData["Title"] = "Teatchers";
+}
+
+<h2>All Teatchers</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Add New Teatcher</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Subject</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.FullName</td>
+                <td>@t.Email</td>
+                <td>@t.PhoneNumber</td>
+                <td>@t.Subject</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@t.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
