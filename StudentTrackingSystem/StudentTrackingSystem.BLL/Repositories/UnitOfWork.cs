@@ -7,20 +7,23 @@ namespace StudentTrackingSystem.BLL.Repositories
     {
         private readonly AppDbContext _context;
         private readonly ITeatcherRepository _teatcherRepository;
+        private readonly ISubjectRepository _subject;
         private readonly IStudentRepository _studentRepository;
         public IStudentRepository StudentRepository { get; private set; }
 
         public ITeatcherRepository TeatcherRepository { get; private set; }
 
-        public UnitOfWork(AppDbContext context, IStudentRepository studentRepository , ITeatcherRepository teatcherRepository)
+        public ISubjectRepository SubjectRepository { get; private set; }
+
+        public UnitOfWork(AppDbContext context, IStudentRepository studentRepository, ITeatcherRepository teatcherRepository, ISubjectRepository subject)
         {
             _context = context;
-            _teatcherRepository = teatcherRepository;
+
             StudentRepository = studentRepository;
             TeatcherRepository = teatcherRepository;
-
-
+            SubjectRepository = subject;
         }
+
 
 
         public async Task<int> CompleteAsync()

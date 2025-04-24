@@ -1,6 +1,4 @@
 ﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
 }
 @model StudentTrackingSystem.PL.DTOs.StudentDTO
@@ -39,3 +37,162 @@
     <button type="submit" class="btn btn-success">Create</button>
     <a href="@Url.Action("Index", "Student")" class="btn btn-secondary">Cancel</a>
 </form>
+ *@
+@*  
+﻿@section Styles {
+    <link rel="stylesheet" href="~/css/CreateStudent.css" />
+}
+ *@
+
+@model StudentTrackingSystem.PL.DTOs.StudentDTO
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <link rel="stylesheet" href="~/css/CreateStudent.css" />
+    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+
+
+</head>
+<body>
+
+<form method="post" class="p-4 mb-4 student-form">
+    <h2 class="text-center mb-4">Add New Student</h2>
+
+    <div class="row mb-2">
+        <div class="col-md-6">
+            <h5 class="section-title mb-3">Student Information</h5>
+
+            <div class="mb-3">
+                <label for="studentName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="studentName" name="FullName" value="@Model.FullName" placeholder="Enter student's full name" required />
+                <div class="invalid-feedback">Please provide a valid name.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="studentEmail" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="studentEmail" name="EmailAddress" value="@Model.EmailAddress" placeholder="example@student.com" required />
+                <div class="invalid-feedback">Please provide a valid email address.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="studentPhone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="studentPhone" name="PhoneNo" value="@Model.PhoneNo" placeholder="Enter student's phone number" required />
+                <div class="invalid-feedback">Please provide a valid phone number starting with 010, 011, 012, or 015.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" placeholder="********" required />
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye-slash"></i>
+                    </button>
+                </div>
+                <div class="invalid-feedback">Password must be at least 6 characters with letters, numbers, and special characters.</div>
+                <div class="form-text">Minimum 6 characters with letters, numbers, and special characters.</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-4 text-center">
+                <div class="student-image-container mb-3">
+                    <img src="../img/default-student.png" alt="Student Preview" class="student-image-preview" id="studentImagePreview">
+                </div>
+                <label for="studentImage" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-upload me-2"></i>Upload Photo
+                </label>
+                <input type="file" class="d-none" id="studentImage" accept="image/*" />
+                <div class="invalid-feedback">Please upload a valid image file.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="grade" class="form-label">Grade</label>
+                <select class="form-select" id="grade" name="Grade" required>
+                    <option value="" selected disabled>Select grade</option>
+                    <option value="Grade 1">Grade 1</option>
+                    <option value="Grade 2">Grade 2</option>
+                    <option value="Grade 3">Grade 3</option>
+                    <option value="Grade 4">Grade 4</option>
+                    <option value="Grade 5">Grade 5</option>
+                    <option value="Grade 6">Grade 6</option>
+                </select>
+                <div class="invalid-feedback">Please select a grade.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="DateOfBirth" required />
+                <div class="invalid-feedback">Please select a valid date of birth.</div>
+            </div>
+
+           
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Gender</label>
+        <div class="d-flex gap-3">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="male" value="male" required />
+                <label class="form-check-label" for="male">Male</label>
+            </div>
+            <div class="form-check ">
+                <input class="form-check-input" type="radio" name="gender" id="female" value="female" required />
+                <label class="form-check-label" for="female">Female</label>
+            </div>
+        </div>
+        <div class="invalid-feedback">Please select a gender.</div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h5 class="section-title mb-3">Parent Information</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="parentName" class="form-label">Parent Name</label>
+                        <input type="text" class="form-control" id="parentName" placeholder="Enter parent's full name" required />
+                        <div class="invalid-feedback">Please provide parent's name.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parentEmail" class="form-label">Parent Email</label>
+                        <input type="email" class="form-control" id="parentEmail" placeholder="example@parent.com" required />
+                        <div class="invalid-feedback">Please provide a valid email address.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="parentPhone" class="form-label">Parent Phone Number</label>
+                        <input type="tel" class="form-control" id="parentPhone" placeholder="Enter parent's phone number" required />
+                        <div class="invalid-feedback">Please provide a valid phone number starting with 010, 011, 012, or 015.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" placeholder="Enter student's address" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12 justify-content-center">
+           
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-person-plus me-2"></i>Register Student
+                </button>
+                <a href="@Url.Action("Index", "Student")" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

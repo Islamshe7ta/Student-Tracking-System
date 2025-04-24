@@ -1,15 +1,29 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<StudentTrackingSystem.Models.Student>
+﻿@model IEnumerable<StudentTrackingSystem.Models.Student>
 
 @{
     ViewData["Title"] = "Student List";
 }
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/ShowStudents.css" />
+   
+     <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
 
-<h2>Students</h2>
+
+</head>
+<body>
+
+    
+
+
+<h2 class="section-title text-center mb-6">All Students</h2>
+
 
 @if (TempData["Message"] != null)
 {
@@ -18,30 +32,62 @@
     </div>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Grade</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var student in Model)
-        {
+<div class="d-flex align-items-center mt-5">
+    <div class="col-10" style="margin-right: 10px;">
+        <label for="gradeFilter" class="form-label visually-hidden">Grade</label>
+        <select id="gradeFilter" class="form-select">
+            <option value="all">All Grades</option>
+            <option value="Grade 1">Grade 1</option>
+            <option value="Grade 2">Grade 2</option>
+            <option value="Grade 3">Grade 3</option>
+            <option value="Grade 4">Grade 4</option>
+            <option value="Grade 5">Grade 5</option>
+            <option value="Grade 6">Grade 6</option>
+        </select>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("Create", "Student")" class="btn btn-primary btn-md ">Add New Student</a>
+    </div>
+</div>
+<div class="table-responsive mt-2">
+    <table class="table table-striped table-hover">
+        <thead>
+          
             <tr>
-                <td>@student.FullName</td>
-                <td>@student.EmailAddress</td>
-                <td>@student.Grade</td>
-                <td>
-                    <a href="@Url.Action("Details", "Student", new { id = student.Id })">Details</a> |
-                    <a href="@Url.Action("Edit", "Student", new { id = student.Id })">Edit</a> |
-                    <a href="@Url.Action("Delete", "Student", new { id = student.Id })">Delete</a>
-                </td>
+                <th>Student Photo</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Grade</th>
+                <th>Parent</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<a href="@Url.Action("Create", "Student")" class="btn btn-primary">Add New Student</a>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td><img src="~/img/default-student.png" alt="Student Photo" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"></td>
+                    <td>@student.FullName</td>
+                    <td>@student.EmailAddress</td>
+                    <td>@student.Grade</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Student", new { id = student.Id })" class="btn btn-sm btn-outline-info me-1">
+                            <i class="bi bi-eye-fill">Details</i>
+                        </a>
+                        <a href="@Url.Action("Edit", "Student", new { id = student.Id })" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil-fill">Edit</i>
+                        </a>
+                        <a href="@Url.Action("Delete", "Student", new { id = student.Id })" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash-fill">Delete</i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
