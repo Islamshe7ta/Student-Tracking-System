@@ -5,6 +5,9 @@ namespace StudentTrackingSystem.BLL.Interfaces
 {
     public interface ITeatcherRepository : IGenaricRepository<Teatcher>
     {
+        Task<int> GetCountAsync();
+        Task<List<Teatcher>> GetRecentAsync(int count); // أو النوع الصحيح
+
 
         // ممكن تضيف دوال خاصة بالطالب هنا لو هتحتاجها
 

@@ -1,9 +1,10 @@
-﻿using StudentTrackingSystem.BLL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Data.Contexts;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using StudentTrackingSystem.DAL.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace StudentTrackingSystem.BLL.Repositories
 {
@@ -44,7 +45,17 @@ namespace StudentTrackingSystem.BLL.Repositories
             _context.SaveChanges();
         }
 
-         
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.Teatchers.CountAsync();
+        }
 
+        public async Task<List<Teatcher>> GetRecentAsync(int count)
+        {
+            return await _context.Teatchers
+                                .OrderByDescending(t => t.Id)
+                                .Take(count)
+                                .ToListAsync();
+        }
     }
 }

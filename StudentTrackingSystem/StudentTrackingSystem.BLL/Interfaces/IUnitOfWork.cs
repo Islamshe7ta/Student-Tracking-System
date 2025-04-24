@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudentTrackingSystem.BLL.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         IStudentRepository StudentRepository { get; }
-        ITeatcherRepository TeatcherRepository { get; } // Add this line to define the missing property  
+        ITeatcherRepository TeatcherRepository { get; }
+        IAuditLogRepository AuditLogRepository { get; }
+        IDatabaseRepository DatabaseRepository { get; }
+        ISystemSettingRepository SystemSettingRepository { get; }
+        IUserRepository UserRepository { get; }
+
         Task<int> CompleteAsync();
     }
-
 }
