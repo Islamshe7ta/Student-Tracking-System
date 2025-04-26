@@ -27,5 +27,11 @@ namespace StudentTrackingSystem.DAL.Models
         public string Gender { get; set; }
 
         public DateTime DateOfBirth { get; set; }
+
+        // Foreign Key
+        public int SubjectId { get; set; }
+
+        // Navigation Property
+        public Subject subjects { get; set; }
     }
 }

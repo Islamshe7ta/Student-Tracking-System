@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.PL.DTOs;
@@ -22,32 +23,36 @@ namespace StudentTrackingSystem.PL.Controllers
             return View(teatchers);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+            ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
             return View(new TeatcherDTO());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TeatcherDTO dto)
+        public IActionResult Create(TeatcherDTO dto)
         {
             if (!ModelState.IsValid)
+            {
+                var subjects = _unitOfWork.SubjectRepository.GetAllAsync().Result;
+                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name");
                 return View(dto);
+            }
 
             var teatcher = new Teatcher
             {
                 FullName = dto.FullName,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
-                Subject = dto.Subject,
+                SubjectId = dto.SubjectId,
                 DateOfBirth = dto.DateOfBirth,
                 Gender = dto.Gender,
-                // لا داعي لإعطاء قيمة لـ Id هنا
             };
 
-
-            await _unitOfWork.TeatcherRepository.AddAsync(teatcher);
-            await _unitOfWork.CompleteAsync();
+            _unitOfWork.TeatcherRepository.AddAsync(teatcher).Wait();
+            _unitOfWork.CompleteAsync().Wait();
 
             return RedirectToAction(nameof(Index));
         }
@@ -63,13 +68,13 @@ namespace StudentTrackingSystem.PL.Controllers
                 FullName = teatcher.FullName,
                 Email = teatcher.Email,
                 PhoneNumber = teatcher.PhoneNumber,
-                Subject = teatcher.Subject,
-                DateOfBirth= teatcher.DateOfBirth,
+                SubjectId = teatcher.SubjectId,
+                DateOfBirth = teatcher.DateOfBirth,
                 Gender = teatcher.Gender,
-
-
             };
 
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+            ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
             return View(dto);
         }
 
@@ -78,19 +83,21 @@ namespace StudentTrackingSystem.PL.Controllers
         public async Task<IActionResult> Edit(int id, TeatcherDTO dto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
-
-            var teatcher = new Teatcher
             {
-                FullName = dto.FullName,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                Subject = dto.Subject,
-                DateOfBirth = dto.DateOfBirth,
-                Gender = dto.Gender,
-                // لا داعي لإعطاء قيمة لـ Id هنا
-            };
+                var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
+                return View(dto);
+            }
 
+            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teatcher == null) return NotFound();
+
+            teatcher.FullName = dto.FullName;
+            teatcher.Email = dto.Email;
+            teatcher.PhoneNumber = dto.PhoneNumber;
+            teatcher.SubjectId = dto.SubjectId;
+            teatcher.DateOfBirth = dto.DateOfBirth;
+            teatcher.Gender = dto.Gender;
 
             _unitOfWork.TeatcherRepository.Update(teatcher);
             await _unitOfWork.CompleteAsync();

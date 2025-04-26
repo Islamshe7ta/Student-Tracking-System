@@ -1,5 +1,5 @@
 ﻿
-    using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace StudentTrackingSystem.PL.DTOs
@@ -20,6 +20,10 @@ namespace StudentTrackingSystem.PL.DTOs
         public string Subject { get; set; }
 
         public string Gender { get; set; }
+        public int SubjectId { get; set; }
+
+        // Navigation Property
+       // public Subject subjects { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }

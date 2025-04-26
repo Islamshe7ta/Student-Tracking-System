@@ -18,6 +18,8 @@ namespace StudentTrackingSystem
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
             builder.Services.AddScoped<ITeatcherRepository, TeatcherRepository>();
+            builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+            builder.Services.AddScoped<IParentRepository, ParentRepository>();
 
             // Ensure the 'UseSqlServer' method is available by adding the correct using directive
             builder.Services.AddDbContext<AppDbContext>(options =>

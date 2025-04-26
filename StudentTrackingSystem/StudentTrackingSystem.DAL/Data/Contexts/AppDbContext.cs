@@ -12,10 +12,19 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
 
         public DbSet<Student> Students { get; set; }  // ✅ ده اللي ناقص
         public DbSet<Teatcher> Teatchers { get; set; }  // ✅ ده اللي ناقص
+        public DbSet<Subject> Subjects { get; set; }
+        
+        public DbSet<Parent> Parents { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+         modelBuilder.Entity<Subject>()
+        .HasMany(s => s.Teatchers)
+        .WithOne(t => t.subjects)
+        .HasForeignKey(t => t.SubjectId);
         }
     }
 }

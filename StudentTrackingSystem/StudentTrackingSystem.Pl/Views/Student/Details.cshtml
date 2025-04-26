@@ -1,35 +1,72 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model StudentTrackingSystem.Models.Student
+﻿ @model StudentDTO
 
 @{
     ViewData["Title"] = "Student Details";
 }
 
-<h2>Student Details</h2>
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-<div>
-    <strong>Full Name:</strong> @Model.FullName
-</div>
-<div>
-    <strong>Date of Birth:</strong> @Model.DateOfBirth
-</div>
-<div>
-    <strong>Email Address:</strong> @Model.EmailAddress
-</div>
-<div>
-    <strong>Phone Number:</strong> @Model.PhoneNo
-</div>
-<div>
-    <strong>Address:</strong> @Model.Address
-</div>
-<div>
-    <strong>Grade:</strong> @Model.Grade
+    <link rel="stylesheet" href="~/css/ShowStudents.css" />
+    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+
+
+</head>
+<body>
+
+   
+﻿
+
+
+<h2 class="section-title text-center mb-4">Student Details</h2>
+
+<div class="table-responsive mt-4">
+    <table class="table table-bordered table-hover text-center">
+        <thead>
+            <tr>
+                <th>Student Photo</th>
+                <th>Full Name</th>
+                <th>Date of Birth</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Grade</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <img src="@Model.ImagePath" alt="Student Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="~/img/default-student.png" alt="Student Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                    </td>
+                <td>@Model.FullName</td>
+                <td>@Model.DateOfBirth.ToShortDateString()</td>
+                <td>@Model.EmailAddress</td>
+                <td>@Model.PhoneNo</td>
+                <td>@Model.Address</td>
+                <td>@Model.Grade</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Student", new { id = Model.StudentId })" class="btn btn-sm btn-outline-primary mb-1">Edit</a>
+                        <a href="@Url.Action("Delete", "Student", new { id = Model.StudentId })" class="btn btn-sm btn-outline-danger mb-1">Delete</a>
+                    <a href="@Url.Action("Index", "Student")" class="btn btn-sm btn-outline-secondary">Back</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
-<a href="@Url.Action("Edit", "Student", new { id = Model.Id })" class="btn btn-primary">Edit</a>
-<a href="@Url.Action("Delete", "Student", new { id = Model.Id })" class="btn btn-danger">Delete</a>
-<a href="@Url.Action("Index", "Student")" class="btn btn-secondary">Back to List</a>
+</body>
+</html>
