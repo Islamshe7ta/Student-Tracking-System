@@ -1,41 +1,20 @@
-﻿
-    using System.ComponentModel.DataAnnotations;
+﻿public class StudentDTO
+{
+    public int StudentId { get; set; }
+    public string FullName { get; set; }
 
-    namespace StudentTrackingSystem.PL.DTOs
-    {
-        public class StudentDTO
-        {
-            public int StudentId { get; set; }
+    public string? Address { get; set; }   
+    public string EmailAddress { get; set; }
+    public string PhoneNo { get; set; }
+    public DateTime DateOfBirth { get; set; }
+    public string Grade { get; set; }
+    public string Gender { get; set; }
+    public string Password { get; set; }
 
-            [Required]
-            [Display(Name = "Student Name")]
-            [MaxLength(35)]
-            [MinLength(5)]
-            public string FullName { get; set; }
+    public string? ImagePath { get; set; }   
 
-            [Required]
-            [Display(Name = "Date of Birth")]
-            [DataType(DataType.Date)]
-            public DateTime DateOfBirth { get; set; }
-
-            [Required]
-            [Display(Name = "Email Address")]
-            [DataType(DataType.EmailAddress)]
-            public string EmailAddress { get; set; }
-
-            [Required]
-            [Display(Name = "Phone Number")]
-            [RegularExpression(@"^(010|011|012|015)\d{8}$", ErrorMessage = "Invalid phone number.")]
-            public string PhoneNo { get; set; }
-
-            [Required]
-            [Display(Name = "Address")]
-            public string Address { get; set; }
-
-            [Required]
-            [Display(Name = "Grade")]
-            public int Grade { get; set; }
-        }
-    }
-
-
+    public IFormFile? StudentImage { get; set; }   
+    public string? ParentName { get; set; }
+    public string? ParentEmail { get; set; }
+    public string? ParentPhone { get; set; }
+}

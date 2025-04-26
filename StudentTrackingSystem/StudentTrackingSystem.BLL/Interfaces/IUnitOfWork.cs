@@ -11,6 +11,7 @@ namespace StudentTrackingSystem.BLL.Interfaces
         IStudentRepository StudentRepository { get; }
         ITeatcherRepository TeatcherRepository { get; } // Add this line to define the missing property
         ISubjectRepository SubjectRepository { get; }
+        IParentRepository ParentRepository { get; }
         Task<int> CompleteAsync();
     }
 

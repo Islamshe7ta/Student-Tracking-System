@@ -1,4 +1,4 @@
-﻿ @model StudentTrackingSystem.Models.Student
+﻿ @model StudentDTO
 
 @{
     ViewData["Title"] = "Student Details";
@@ -42,9 +42,16 @@
         </thead>
         <tbody>
             <tr>
-                <td>
-                    <img src="~/img/default-student.png" alt="Student Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
-                </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <img src="@Model.ImagePath" alt="Student Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="~/img/default-student.png" alt="Student Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                    </td>
                 <td>@Model.FullName</td>
                 <td>@Model.DateOfBirth.ToShortDateString()</td>
                 <td>@Model.EmailAddress</td>
@@ -52,8 +59,8 @@
                 <td>@Model.Address</td>
                 <td>@Model.Grade</td>
                 <td>
-                    <a href="@Url.Action("Edit", "Student", new { id = Model.Id })" class="btn btn-sm btn-outline-primary mb-1">Edit</a>
-                    <a href="@Url.Action("Delete", "Student", new { id = Model.Id })" class="btn btn-sm btn-outline-danger mb-1">Delete</a>
+                    <a href="@Url.Action("Edit", "Student", new { id = Model.StudentId })" class="btn btn-sm btn-outline-primary mb-1">Edit</a>
+                        <a href="@Url.Action("Delete", "Student", new { id = Model.StudentId })" class="btn btn-sm btn-outline-danger mb-1">Delete</a>
                     <a href="@Url.Action("Index", "Student")" class="btn btn-sm btn-outline-secondary">Back</a>
                 </td>
             </tr>
