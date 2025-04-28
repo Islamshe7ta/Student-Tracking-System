@@ -1,19 +1,12 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model IEnumerable<StudentTrackingSystem.DAL.Models.Teatcher>
-
-@{
-    ViewData["Title"] = "Teatchers";
+﻿@{
+    ViewData["Title"] = "All Teachers";
 }
 
-<h2>All Teatchers</h2>
+<h2>All Teachers</h2>
 
-<a asp-action="Create" class="btn btn-primary mb-3">Add New Teatcher</a>
+<a asp-action="Create" class="btn btn-primary mb-3">Add New Teacher</a>
 
-<table class="table table-striped">
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Full Name</th>
@@ -30,7 +23,7 @@
                 <td>@t.FullName</td>
                 <td>@t.Email</td>
                 <td>@t.PhoneNumber</td>
-                <td>@t.Subject</td>
+                <td>@t.Subject?.Name ?? "N/A"</td> <!-- هنا إذا كانت المادة مرتبطة بعنصر Subject -->
                 <td>
                     <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-warning">Edit</a>
                     <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Details</a>

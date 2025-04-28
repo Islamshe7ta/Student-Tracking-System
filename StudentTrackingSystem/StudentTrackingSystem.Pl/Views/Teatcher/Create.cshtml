@@ -1,46 +1,40 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
+﻿@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
 
-@{
-    ViewData["Title"] = "Create Teatcher";
-}
+<h2>Create New Teacher</h2>
 
-<h2>Create New Teatcher</h2>
-
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+<form method="post">
+    @Html.AntiForgeryToken()
     <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+        <label for="FullName">Full Name</label>
+        <input type="text" id="FullName" name="FullName" class="form-control" value="@Model.FullName" required />
     </div>
-
     <div class="form-group">
-        <label asp-for="Email "></label>
-        <input asp-for="Email " class="form-control" />
-        <span asp-validation-for="Email " class="text-danger"></span>
+        <label for="Email">Email</label>
+        <input type="email" id="Email" name="Email" class="form-control" value="@Model.Email" required />
     </div>
-
     <div class="form-group">
-        <label asp-for="PhoneNumber"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        <label for="PhoneNumber">Phone Number</label>
+        <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" required />
     </div>
-
     <div class="form-group">
-        <label asp-for="SubjectId"></label>
-        <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-control">
-            <option value="">-- Select Subject --</option>
+        <label for="SubjectId">Subject</label>
+        <select id="SubjectId" name="SubjectId" class="form-control" required>
+            @foreach (var subject in ViewBag.Subjects as SelectList)
+            {
+                <option value="@subject.Value" >@subject.Text</option>
+            }
         </select>
-        <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
-
-
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <div class="form-group">
+        <label for="DateOfBirth">Date of Birth</label>
+        <input type="date" id="DateOfBirth" name="DateOfBirth" class="form-control" value="@Model.DateOfBirth" required />
+    </div>
+    <div class="form-group">
+        <label for="Gender">Gender</label>
+        <select id="Gender" name="Gender" class="form-control" required>
+            <option value="Male" >Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
 </form>

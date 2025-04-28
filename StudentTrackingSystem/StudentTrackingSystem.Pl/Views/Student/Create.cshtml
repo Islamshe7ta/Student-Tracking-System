@@ -35,6 +35,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
+            background-color: #e0f7fa; /* لون خلفية سماوي */
+            padding: 20px; /* تأكد من إضافة padding لتوفير مساحة داخل الفورم */
+            border-radius: 8px; /* اختياري، لجعل الحواف دائرية */
         }
 
         .form-section {
@@ -122,6 +125,7 @@
         .action-buttons {
             display: flex;
             justify-content: center;
+           
             gap: 10px;
             margin-top: 40px;
         }
@@ -217,7 +221,6 @@
 
                 <!-- Right Column - Additional Information -->
                 <div class="form-section">
-                    <h2 class="section-title">Additional Information</h2>
                     <!-- Student Photo -->
                     <div class="student-photo">
                         <div class="photo-container" id="photoContainer">
@@ -273,7 +276,7 @@
             </div>
 
             <div class="action-buttons">
-                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="submit" class="btn-save ">Save Changes</button>
                 <a href="/Students" class="btn-cancel">Cancel</a>
             </div>
         </form>

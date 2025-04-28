@@ -1,138 +1,159 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.PL.DTOs;
 
-namespace StudentTrackingSystem.PL.Controllers
+public class TeatcherController : Controller
 {
-    public class TeatcherController : Controller
+    private readonly IUnitOfWork _unitOfWork;
+
+    public TeatcherController(IUnitOfWork unitOfWork)
     {
-        private readonly IUnitOfWork _unitOfWork;
+        _unitOfWork = unitOfWork;
+    }
 
-        public TeatcherController(IUnitOfWork unitOfWork)
+    // عرض قائمة المدرسين
+    public async Task<IActionResult> Index()
+    {
+        var teachers = await _unitOfWork.TeatcherRepository.GetAllAsync();
+        return View(teachers);
+    }
+
+    // عرض صفحة إنشاء مدرس جديد
+    [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+        await LoadSubjectsIntoViewBag();
+        return View(new TeatcherDTO());
+    }
+
+    // إضافة مدرس جديد (POST)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(TeatcherDTO dto)
+    {
+        if (!ModelState.IsValid)
         {
-            _unitOfWork = unitOfWork;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var teatchers = await _unitOfWork.TeatcherRepository.GetAllAsync();
-            return View(teatchers);
-        }
-
-        public async Task<IActionResult> Create()
-        {
-            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-            ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
-            return View(new TeatcherDTO());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(TeatcherDTO dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                var subjects = _unitOfWork.SubjectRepository.GetAllAsync().Result;
-                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name");
-                return View(dto);
-            }
-
-            var teatcher = new Teatcher
-            {
-                FullName = dto.FullName,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                SubjectId = dto.SubjectId,
-                DateOfBirth = dto.DateOfBirth,
-                Gender = dto.Gender,
-            };
-
-            _unitOfWork.TeatcherRepository.AddAsync(teatcher).Wait();
-            _unitOfWork.CompleteAsync().Wait();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        public async Task<IActionResult> Edit(int id)
-        {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
-
-            var dto = new TeatcherDTO
-            {
-                Id = teatcher.Id,
-                FullName = teatcher.FullName,
-                Email = teatcher.Email,
-                PhoneNumber = teatcher.PhoneNumber,
-                SubjectId = teatcher.SubjectId,
-                DateOfBirth = teatcher.DateOfBirth,
-                Gender = teatcher.Gender,
-            };
-
-            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-            ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
+            await LoadSubjectsIntoViewBag(dto.SubjectId);
             return View(dto);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TeatcherDTO dto)
+        var teacher = new Teatcher
         {
-            if (!ModelState.IsValid)
-            {
-                var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
-                return View(dto);
-            }
+            FullName = dto.FullName,
+            Email = dto.Email,
+            PhoneNumber = dto.PhoneNumber,
+            SubjectId = dto.SubjectId,
+            DateOfBirth = dto.DateOfBirth,
+            Gender = dto.Gender
+        };
 
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+        await _unitOfWork.TeatcherRepository.AddAsync(teacher);
+        await _unitOfWork.CompleteAsync();
 
-            teatcher.FullName = dto.FullName;
-            teatcher.Email = dto.Email;
-            teatcher.PhoneNumber = dto.PhoneNumber;
-            teatcher.SubjectId = dto.SubjectId;
-            teatcher.DateOfBirth = dto.DateOfBirth;
-            teatcher.Gender = dto.Gender;
+        return RedirectToAction("Index");
+    }
 
-            _unitOfWork.TeatcherRepository.Update(teatcher);
-            await _unitOfWork.CompleteAsync();
-
-            return RedirectToAction(nameof(Index));
+    // عرض صفحة تعديل مدرس
+    public async Task<IActionResult> Edit(int id)
+    {
+        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+        if (teacher == null)
+        {
+            return NotFound();
         }
 
-        public async Task<IActionResult> Details(int id)
+        var dto = new TeatcherDTO
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+            Id = teacher.Id,
+            FullName = teacher.FullName,
+            Email = teacher.Email,
+            PhoneNumber = teacher.PhoneNumber,
+            SubjectId = teacher.SubjectId,
+            DateOfBirth = teacher.DateOfBirth,
+            Gender = teacher.Gender
+        };
 
-            return View(teatcher);
+        await LoadSubjectsIntoViewBag(dto.SubjectId);
+        return View(dto);
+    }
+
+    // تعديل مدرس (POST)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, TeatcherDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            await LoadSubjectsIntoViewBag(dto.SubjectId);
+            return View(dto);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+        if (teacher == null)
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
-
-            return View(teatcher);
+            return NotFound();
         }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        teacher.FullName = dto.FullName;
+        teacher.Email = dto.Email;
+        teacher.PhoneNumber = dto.PhoneNumber;
+        teacher.SubjectId = dto.SubjectId;
+        teacher.DateOfBirth = dto.DateOfBirth;
+        teacher.Gender = dto.Gender;
+
+        _unitOfWork.TeatcherRepository.Update(teacher);
+        await _unitOfWork.CompleteAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // عرض تفاصيل مدرس
+    public async Task<IActionResult> Details(int id)
+    {
+        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+        if (teacher == null)
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
-
-            _unitOfWork.TeatcherRepository.Delete(teatcher);
-            await _unitOfWork.CompleteAsync();
-
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
+
+        return View(teacher);
+    }
+
+    // عرض صفحة حذف مدرس
+    public async Task<IActionResult> Delete(int id)
+    {
+        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+        if (teacher == null)
+        {
+            return NotFound();
+        }
+
+        return View(teacher);
+    }
+
+    // تأكيد حذف المدرس
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+        if (teacher == null)
+        {
+            return NotFound();
+        }
+
+        _unitOfWork.TeatcherRepository.Delete(teacher);
+        await _unitOfWork.CompleteAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // تحميل المواد في الـ ViewBag
+    private async Task LoadSubjectsIntoViewBag(object selectedSubjectId = null)
+    {
+        var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+        ViewBag.Subjects = new SelectList(subjects, "Id", "Name", selectedSubjectId);
     }
 }
-
