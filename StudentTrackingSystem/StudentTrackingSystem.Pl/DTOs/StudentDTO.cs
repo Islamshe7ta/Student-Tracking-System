@@ -9,7 +9,7 @@
     public DateTime DateOfBirth { get; set; }
     public string Grade { get; set; }
     public string Gender { get; set; }
-    public string Password { get; set; }
+   // public string Password { get; set; }
 
     public string? ImagePath { get; set; }   
 

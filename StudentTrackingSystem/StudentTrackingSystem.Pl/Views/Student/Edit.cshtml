@@ -1,4 +1,4 @@
-﻿@using StudentTrackingSystem.Models
+﻿@* @using StudentTrackingSystem.Models
 @using StudentTrackingSystem.PL.DTOs
 @model StudentDTO
 
@@ -42,11 +42,7 @@
                         <span asp-validation-for="PhoneNo" class="text-danger"></span>
                     </div>
 
-                  @*   <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Password</label>
-                        <input asp-for="Password" class="form-control" type="password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div> *@
+                  
                 </div>
 
                 <div class="col-md-6">
@@ -88,5 +84,157 @@
             </div>
         </form>
     </div>
+</body>
+</html>
+ *@
+ @using StudentTrackingSystem.Models
+@using StudentTrackingSystem.PL.DTOs
+@model StudentDTO
+
+@{
+    ViewData["Title"] = "Edit Student";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/EditStudent.css" />
+    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Edit Student</h2>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="p-4 mb-4 student-form">
+            <!-- Hidden fields for important data -->
+            <input type="hidden" asp-for="StudentId" />
+            <!-- IMPORTANT: Add this hidden field for the existing image path -->
+            <input type="hidden" asp-for="ImagePath" />
+
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <h5 class="section-title mb-3">Student Information</h5>
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="EmailAddress" class="form-label">Email Address</label>
+                        <input asp-for="EmailAddress" class="form-control" />
+                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNo" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNo" class="form-control" />
+                        <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Gender" class="form-label">Gender</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="" selected disabled>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="section-title mb-3">Additional Information</h5>
+                    <div class="mb-3">
+                        <label asp-for="Grade" class="form-label">Grade</label>
+                        <select asp-for="Grade" class="form-select">
+                            <option value="" selected disabled>Select Grade</option>
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                        </select>
+                        <span asp-validation-for="Grade" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <input asp-for="DateOfBirth" class="form-control" type="date" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 text-center">
+                        <div class="student-image-container mb-3">
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <img src="@Model.ImagePath" alt="Student Preview" id="imagePreview" class="student-image-preview" />
+                            }
+                            else
+                            {
+                                <img src="/images/default-profile.png" alt="Default Profile" id="imagePreview" class="student-image-preview" />
+                            }
+                        </div>
+                        <label for="studentImage" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-upload me-2"></i>Change Photo
+                        </label>
+                        <input type="file" name="studentImage" id="studentImage" class="d-none" accept="image/*" />
+                        <p class="small text-muted mt-2">Leave empty to keep the current image</p>
+                    </div>
+
+                    <!-- Parent Information Section -->
+                    <h5 class="section-title mb-3">Parent Information</h5>
+                    <div class="mb-3">
+                        <label asp-for="ParentName" class="form-label">Parent Name</label>
+                        <input asp-for="ParentName" class="form-control" />
+                        <span asp-validation-for="ParentName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ParentPhone" class="form-label">Parent Phone</label>
+                        <input asp-for="ParentPhone" class="form-control" />
+                        <span asp-validation-for="ParentPhone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ParentEmail" class="form-label">Parent Email</label>
+                        <input asp-for="ParentEmail" class="form-control" />
+                        <span asp-validation-for="ParentEmail" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a href="@Url.Action("Index", "Student")" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Script for image preview -->
+    <script>
+        document.getElementById('studentImage').onchange = function (evt) {
+            var tgt = evt.target || window.event.srcElement,
+                files = tgt.files;
+
+            if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('imagePreview').src = fr.result;
+                }
+                fr.readAsDataURL(files[0]);
+            }
+        }
+    </script>
 </body>
 </html>

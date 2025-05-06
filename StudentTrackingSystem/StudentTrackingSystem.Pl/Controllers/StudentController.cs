@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using StudentTrackingSystem.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using StudentTrackingSystem.DAL.Data.Contexts;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
@@ -15,16 +17,21 @@ namespace StudentTrackingSystem.PL.Controllers
     public class StudentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly AppDbContext _Context;
 
-        public StudentController(IUnitOfWork unitOfWork)
+        public StudentController(IUnitOfWork unitOfWork, AppDbContext appContext)
         {
             _unitOfWork = unitOfWork;
+            _Context = appContext;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var students = await _unitOfWork.StudentRepository.GetAllAsync();
+            // Corrected the usage of DbContext.Set<TEntity>() to properly call the method
+            var students = await _Context.Set<Student>()
+                .Include(s => s.Parent) // Fetch related Parent data
+                .ToListAsync(); // Ensure the query is executed and data is retrieved
 
             var studentDTOs = students.Select(student => new StudentDTO
             {
@@ -37,9 +44,9 @@ namespace StudentTrackingSystem.PL.Controllers
                 Grade = student.Grade,
                 Gender = student.Gender,
                 ImagePath = student.ImagePath,
-                ParentName = student.Parent?.FullName,
-                ParentPhone = student.Parent?.PhoneNo,
-                ParentEmail = student.Parent?.EmailAddress
+                ParentName = student.FullName,
+                ParentPhone = student.PhoneNo,
+                ParentEmail = student.EmailAddress
             }).ToList();
 
             return View("Index", studentDTOs);
@@ -93,7 +100,7 @@ namespace StudentTrackingSystem.PL.Controllers
                     Address = studentDTO.Address,
                     Grade = studentDTO.Grade,
                     Gender = studentDTO.Gender,
-                    Password = studentDTO.Password,  // Save the password
+                    //Password = studentDTO.Password,  // Save the password
                     ParentId = parent.Id,  // Set the ParentId for the student
                     ImagePath = imagePath   // Set the student's image path
                 };
@@ -114,12 +121,17 @@ namespace StudentTrackingSystem.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id is null) return BadRequest();
 
-            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
-            if (student is null) return NotFound();
+            if (id is null)
+                return BadRequest();
 
-            // تحويل Student إلى StudentDTO
+            var student = await _Context.Students
+                .Include(s => s.Parent)  // هنا بنجيب بيانات الأب المرتبط بالطالب
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (student is null)
+                return NotFound();
+
             var studentDTO = new StudentDTO
             {
                 StudentId = student.Id,
@@ -130,7 +142,6 @@ namespace StudentTrackingSystem.PL.Controllers
                 DateOfBirth = student.DateOfBirth,
                 Grade = student.Grade,
                 Gender = student.Gender,
-                Password = student.Password,
                 ImagePath = student.ImagePath,
                 ParentName = student.Parent?.FullName,
                 ParentEmail = student.Parent?.EmailAddress,
@@ -140,6 +151,7 @@ namespace StudentTrackingSystem.PL.Controllers
             return View(studentDTO);
         }
 
+        
 
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -149,8 +161,16 @@ namespace StudentTrackingSystem.PL.Controllers
             var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
             if (student is null) return NotFound();
 
+            // Get the parent information if available
+            Parent parent = null;
+            if (student.ParentId.HasValue)
+            {
+                parent = await _unitOfWork.ParentRepository.GetAsync(student.ParentId.Value);
+            }
+
             var studentDTO = new StudentDTO
             {
+                StudentId = student.Id,
                 FullName = student.FullName,
                 DateOfBirth = student.DateOfBirth,
                 EmailAddress = student.EmailAddress,
@@ -158,10 +178,11 @@ namespace StudentTrackingSystem.PL.Controllers
                 Address = student.Address,
                 Grade = student.Grade,
                 Gender = student.Gender,
-                ImagePath = student.ImagePath, // Add ImagePath for editing
-                ParentName = student.Parent?.FullName, // Parent info
-                ParentPhone = student.Parent?.PhoneNo,
-                ParentEmail = student.Parent?.EmailAddress
+                ImagePath = student.ImagePath,
+                // Set parent data explicitly from the parent object, not from student.Parent
+                ParentName = parent?.FullName,
+                ParentPhone = parent?.PhoneNo,
+                ParentEmail = parent?.EmailAddress
             };
 
             return View(studentDTO);
@@ -169,12 +190,16 @@ namespace StudentTrackingSystem.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, StudentDTO studentDTO, IFormFile studentImage)
+        public async Task<IActionResult> Edit(int id, StudentDTO studentDTO, IFormFile studentImage)
         {
-            if (id is null || !ModelState.IsValid)
-                return View(studentDTO);
+            if (id != studentDTO.StudentId)
+                return NotFound();
 
-            string imagePath = studentDTO.ImagePath; // Keep the original image path
+            // We don't want to immediately reject the form if there are model validation issues
+            // Instead, we'll check specific validation issues that matter
+
+            // Keep existing image path if no new image is uploaded
+            string imagePath = studentDTO.ImagePath;
             if (studentImage != null && studentImage.Length > 0)
             {
                 var fileName = Path.GetFileName(studentImage.FileName);
@@ -185,15 +210,16 @@ namespace StudentTrackingSystem.PL.Controllers
                     await studentImage.CopyToAsync(stream);
                 }
 
-                imagePath = "/images/" + fileName;  // Store the new relative path
+                imagePath = "/images/" + fileName;
             }
 
-            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
+            var student = await _unitOfWork.StudentRepository.GetAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
 
+            // Update student information
             student.FullName = studentDTO.FullName;
             student.DateOfBirth = studentDTO.DateOfBirth;
             student.EmailAddress = studentDTO.EmailAddress;
@@ -201,26 +227,56 @@ namespace StudentTrackingSystem.PL.Controllers
             student.Address = studentDTO.Address;
             student.Grade = studentDTO.Grade;
             student.Gender = studentDTO.Gender;
-            student.Password = studentDTO.Password;  // Update password
-            student.ImagePath = imagePath;
+            student.ImagePath = imagePath; // Use the image path we determined above
 
-            // If Parent data is changed, add or update the Parent entity
-            if (!string.IsNullOrEmpty(studentDTO.ParentName) &&
-                !string.IsNullOrEmpty(studentDTO.ParentPhone) &&
+            // Handle parent information
+            if (!string.IsNullOrEmpty(studentDTO.ParentName) ||
+                !string.IsNullOrEmpty(studentDTO.ParentPhone) ||
                 !string.IsNullOrEmpty(studentDTO.ParentEmail))
             {
-                var parent = new Parent
+                if (student.ParentId.HasValue)
                 {
-                    FullName = studentDTO.ParentName,
-                    PhoneNo = studentDTO.ParentPhone,
-                    EmailAddress = studentDTO.ParentEmail
-                };
+                    var existingParent = await _unitOfWork.ParentRepository.GetAsync(student.ParentId.Value);
+                    if (existingParent != null)
+                    {
+                        // Update existing parent
+                        existingParent.FullName = studentDTO.ParentName;
+                        existingParent.PhoneNo = studentDTO.ParentPhone;
+                        existingParent.EmailAddress = studentDTO.ParentEmail;
 
-                // Add the parent to the ParentRepository
-                await _unitOfWork.ParentRepository.AddAsync(parent);
-                await _unitOfWork.CompleteAsync();  // Ensure the parent is saved to get ParentId
+                        _unitOfWork.ParentRepository.Update(existingParent);
+                    }
+                    else
+                    {
+                        // Create new parent if no parent exists but parent ID was set
+                        var newParent = new Parent
+                        {
+                            FullName = studentDTO.ParentName,
+                            PhoneNo = studentDTO.ParentPhone,
+                            EmailAddress = studentDTO.ParentEmail
+                        };
 
-                student.ParentId = parent.Id;  // Now you can assign the new ParentId
+                        await _unitOfWork.ParentRepository.AddAsync(newParent);
+                        await _unitOfWork.CompleteAsync();
+
+                        student.ParentId = newParent.Id;
+                    }
+                }
+                else
+                {
+                    // Create new parent if student has no parent assigned
+                    var newParent = new Parent
+                    {
+                        FullName = studentDTO.ParentName,
+                        PhoneNo = studentDTO.ParentPhone,
+                        EmailAddress = studentDTO.ParentEmail
+                    };
+
+                    await _unitOfWork.ParentRepository.AddAsync(newParent);
+                    await _unitOfWork.CompleteAsync();
+
+                    student.ParentId = newParent.Id;
+                }
             }
 
             _unitOfWork.StudentRepository.Update(student);
@@ -232,75 +288,68 @@ namespace StudentTrackingSystem.PL.Controllers
                 return RedirectToAction("Index");
             }
 
+            // If we get here, something went wrong with saving
             return View(studentDTO);
         }
-        
-        
-        
-        
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id is null) return BadRequest();
+        //[HttpGet]
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id is null) return BadRequest();
 
-            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
-            if (student is null) return NotFound();
+        //    var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
+        //    if (student is null) return NotFound();
 
-            // تحويل الـ Student إلى StudentDTO
-            var studentDTO = new StudentDTO
-            {
-                StudentId = student.Id,
-                FullName = student.FullName,
-                Address = student.Address,
-                EmailAddress = student.EmailAddress,
-                PhoneNo = student.PhoneNo,
-                DateOfBirth = student.DateOfBirth,
-                Grade = student.Grade,
-                Gender = student.Gender,
-                Password = student.Password,
-                ImagePath = student.ImagePath,
-                ParentName = student.Parent?.FullName, // لو في Parent
-                ParentEmail = student.Parent?.EmailAddress, // لو في Parent
-                ParentPhone = student.Parent?.PhoneNo // لو في Parent
-            };
+        //    // تحويل الـ Student إلى StudentDTO
+        //    var studentDTO = new StudentDTO
+        //    {
+        //        StudentId = student.Id,
+        //        FullName = student.FullName,
+        //        Address = student.Address,
+        //        EmailAddress = student.EmailAddress,
+        //        PhoneNo = student.PhoneNo,
+        //        DateOfBirth = student.DateOfBirth,
+        //        Grade = student.Grade,
+        //        Gender = student.Gender,
+        //        ImagePath = student.ImagePath,
+        //        ParentName = student.Parent?.FullName,
+        //        ParentEmail = student.Parent?.EmailAddress,
+        //        ParentPhone = student.Parent?.PhoneNo
+        //    };
 
-            return View(studentDTO);
-        }
+        //    return View(studentDTO);
+        //}
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var student = await _unitOfWork.StudentRepository.GetAsync(id);
-            if (student is null) return NotFound();
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var student = await _unitOfWork.StudentRepository.GetAsync(id);
+        //    if (student is null) return NotFound();
 
-            // حذف الطالب من الـ Repository
-            _unitOfWork.StudentRepository.Delete(student);
-            await _unitOfWork.CompleteAsync();
+        //    // حذف الطالب من الـ Repository
+        //    _unitOfWork.StudentRepository.Delete(student);
+        //    await _unitOfWork.CompleteAsync();
 
-            return RedirectToAction(nameof(Index)); // بعد الحذف تروح على الصفحة الرئيسية أو أي صفحة تانية.
-        }
+        //    TempData["Message"] = "Student Deleted Successfully";
+        //    return RedirectToAction(nameof(Index));
+        //}
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
-        {
-            if (id is null) return BadRequest();
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeleteConfirmed(int id)
+{
+    var student = await _unitOfWork.StudentRepository.GetAsync(id);
+    if (student is null)
+        return NotFound();
 
-            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
-            if (student is null) return NotFound();
+    _unitOfWork.StudentRepository.Delete(student);
+    await _unitOfWork.CompleteAsync();
 
-            _unitOfWork.StudentRepository.Delete(student);
-            int result = await _unitOfWork.CompleteAsync();
+    TempData["Message"] = "Student Deleted Successfully";
+    return RedirectToAction(nameof(Index));
+}
 
-            if (result > 0)
-            {
-                TempData["Message"] = "Student Deleted Successfully";
-                return RedirectToAction("Index");
-            }
-
-            return View("Delete", student);
-        }
     }
+
 }

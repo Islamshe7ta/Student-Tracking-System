@@ -36,11 +36,11 @@ public class Student : BaseEntity
     // Image path for student
     public string? ImagePath { get; set; } 
 
-    // Password
-    [Required]
-    [DataType(DataType.Password)]
-    [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
-    public string Password { get; set; }
+    // Password 
+    //[Required]
+    //[DataType(DataType.Password)]
+    //[MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+    //public string Password { get; set; }
 
     public string Gender { get; set; }
 }
