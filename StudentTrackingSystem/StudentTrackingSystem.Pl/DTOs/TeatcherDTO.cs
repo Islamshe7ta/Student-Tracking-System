@@ -17,13 +17,17 @@ namespace StudentTrackingSystem.PL.DTOs
         [Phone]
         public string PhoneNumber { get; set; }
 
-        public string Subject { get; set; }
+        //public string Subject { get; set; }
 
         public string Gender { get; set; }
         public int SubjectId { get; set; }
 
+        public string? ImagePath { get; set; }
+
+        public IFormFile? StudentImage { get; set; }
+
         // Navigation Property
-       // public Subject subjects { get; set; }
+        // public Subject subjects { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }

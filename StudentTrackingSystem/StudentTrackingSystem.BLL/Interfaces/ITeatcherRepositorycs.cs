@@ -5,6 +5,8 @@ namespace StudentTrackingSystem.BLL.Interfaces
 {
     public interface ITeatcherRepository : IGenaricRepository<Teatcher>
     {
+        Task<IEnumerable<Teatcher>> GetAllWithSubjectAsync();
+        Task<Teatcher?> GetWithSubjectAsync(int id);
 
         // ممكن تضيف دوال خاصة بالطالب هنا لو هتحتاجها
 
@@ -13,5 +15,6 @@ namespace StudentTrackingSystem.BLL.Interfaces
         //void Add(Student student);
         //void Update(Student student);
         //void Delete(int id);
+
     }
 }

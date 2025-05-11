@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Models;
@@ -11,37 +9,54 @@ namespace StudentTrackingSystem.PL.Controllers
     public class TeatcherController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TeatcherController(IUnitOfWork unitOfWork)
+        public TeatcherController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
         {
-            var teatchers = await _unitOfWork.TeatcherRepository.GetAllAsync();
-            return View(teatchers);
+            var teachers = await _unitOfWork.TeatcherRepository.GetAllWithSubjectAsync();
+            return View(teachers);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-            ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
+            await LoadDropDowns();
             return View(new TeatcherDTO());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TeatcherDTO dto)
+        public async Task<IActionResult> Create(TeatcherDTO dto)
         {
             if (!ModelState.IsValid)
             {
-                var subjects = _unitOfWork.SubjectRepository.GetAllAsync().Result;
-                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name");
+                await LoadDropDowns();
                 return View(dto);
             }
 
-            var teatcher = new Teatcher
+            string? imagePath = null;
+            if (dto.StudentImage != null)
+            {
+                var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploads);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.StudentImage.CopyToAsync(fileStream);
+                }
+
+                imagePath = "/uploads/" + fileName;
+            }
+
+            var teacher = new Teatcher
             {
                 FullName = dto.FullName,
                 Email = dto.Email,
@@ -49,32 +64,34 @@ namespace StudentTrackingSystem.PL.Controllers
                 SubjectId = dto.SubjectId,
                 DateOfBirth = dto.DateOfBirth,
                 Gender = dto.Gender,
+                ImagePath = imagePath
             };
 
-            _unitOfWork.TeatcherRepository.AddAsync(teatcher).Wait();
-            _unitOfWork.CompleteAsync().Wait();
+            await _unitOfWork.TeatcherRepository.AddAsync(teacher);
+            await _unitOfWork.CompleteAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null) return NotFound();
 
             var dto = new TeatcherDTO
             {
-                Id = teatcher.Id,
-                FullName = teatcher.FullName,
-                Email = teatcher.Email,
-                PhoneNumber = teatcher.PhoneNumber,
-                SubjectId = teatcher.SubjectId,
-                DateOfBirth = teatcher.DateOfBirth,
-                Gender = teatcher.Gender,
+                Id = teacher.Id,
+                FullName = teacher.FullName,
+                Email = teacher.Email,
+                PhoneNumber = teacher.PhoneNumber,
+                SubjectId = teacher.SubjectId,
+                DateOfBirth = teacher.DateOfBirth,
+                Gender = teacher.Gender,
+                ImagePath = teacher.ImagePath
             };
 
-            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-            ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
+            await LoadDropDowns(dto.SubjectId, dto.Gender);
             return View(dto);
         }
 
@@ -84,55 +101,72 @@ namespace StudentTrackingSystem.PL.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-                ViewBag.Subjects = new SelectList(subjects.ToList(), "Id", "Name", dto.SubjectId);
+                await LoadDropDowns(dto.SubjectId, dto.Gender);
                 return View(dto);
             }
 
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null) return NotFound();
 
-            teatcher.FullName = dto.FullName;
-            teatcher.Email = dto.Email;
-            teatcher.PhoneNumber = dto.PhoneNumber;
-            teatcher.SubjectId = dto.SubjectId;
-            teatcher.DateOfBirth = dto.DateOfBirth;
-            teatcher.Gender = dto.Gender;
+            teacher.FullName = dto.FullName;
+            teacher.Email = dto.Email;
+            teacher.PhoneNumber = dto.PhoneNumber;
+            teacher.SubjectId = dto.SubjectId;
+            teacher.DateOfBirth = dto.DateOfBirth;
+            teacher.Gender = dto.Gender;
 
-            _unitOfWork.TeatcherRepository.Update(teatcher);
+            if (dto.StudentImage != null)
+            {
+                var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploads);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.StudentImage.CopyToAsync(fileStream);
+                }
+
+                teacher.ImagePath = "/uploads/" + fileName;
+            }
+
+            _unitOfWork.TeatcherRepository.Update(teacher);
             await _unitOfWork.CompleteAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+            var teacher = await _unitOfWork.TeatcherRepository.GetWithSubjectAsync(id);
+            if (teacher == null)
+                return NotFound();
 
-            return View(teatcher);
+            return View(teacher);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null)
+                return NotFound();
 
-            return View(teatcher);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var teatcher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teatcher == null) return NotFound();
-
-            _unitOfWork.TeatcherRepository.Delete(teatcher);
+            _unitOfWork.TeatcherRepository.Delete(teacher);
             await _unitOfWork.CompleteAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadDropDowns(int? selectedSubjectId = null, string? selectedGender = null)
+        {
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+            ViewBag.Subjects = new SelectList(subjects, "Id", "Name", selectedSubjectId);
+
+            var genders = new List<string> { "Male", "Female" };
+            ViewBag.Genders = new SelectList(genders, selectedGender);
         }
     }
 }
-

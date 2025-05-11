@@ -1,19 +1,12 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
+﻿@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
 
 @{
-    ViewData["Title"] = "Create Teatcher";
+    ViewData["Title"] = "Add New Teacher";
 }
 
-<h2>Create New Teatcher</h2>
+<h2>@ViewData["Title"]</h2>
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+<form asp-action="Create" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="FullName"></label>
         <input asp-for="FullName" class="form-control" />
@@ -21,9 +14,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Email "></label>
-        <input asp-for="Email " class="form-control" />
-        <span asp-validation-for="Email " class="text-danger"></span>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -33,14 +26,36 @@
     </div>
 
     <div class="form-group">
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" class="form-control" asp-items="ViewBag.Genders">
+            <option value="">Select Gender</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DateOfBirth"></label>
+        <input asp-for="DateOfBirth" type="date" class="form-control" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
         <label asp-for="SubjectId"></label>
-        <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-control">
-            <option value="">-- Select Subject --</option>
+        <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Subjects">
+            <option value="">Select Subject</option>
         </select>
         <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
 
+    <div class="form-group">
+        <label asp-for="StudentImage"></label>
+        <input asp-for="StudentImage" type="file" class="form-control" />
+        <span asp-validation-for="StudentImage" class="text-danger"></span>
+    </div>
 
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
