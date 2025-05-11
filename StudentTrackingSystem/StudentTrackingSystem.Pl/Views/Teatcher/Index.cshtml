@@ -1,35 +1,83 @@
-﻿@{
-    ViewData["Title"] = "All Teachers";
+@model IEnumerable<StudentTrackingSystem.DAL.Models.Teatcher>
+
+@{
+    ViewData["Title"] = "Teachers List";
+    Layout = "_Layout"; // تأكد من أن اسم Layout صحيح
 }
 
-<h2>All Teachers</h2>
+<h2>@ViewData["Title"]</h2>
 
-<a asp-action="Create" class="btn btn-primary mb-3">Add New Teacher</a>
+<p>
+    <a class="btn btn-success" asp-action="Create">+ Add New Teacher</a>
+</p>
 
-<table class="table table-bordered table-striped">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Full Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
             <th>Subject</th>
+            <th>Image</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var t in Model)
+        @foreach (var teacher in Model)
         {
             <tr>
-                <td>@t.FullName</td>
-                <td>@t.Email</td>
-                <td>@t.PhoneNumber</td>
-                <td>@t.Subject?.Name ?? "N/A"</td> <!-- هنا إذا كانت المادة مرتبطة بعنصر Subject -->
+                <td>@teacher.FullName</td>
+                <td>@teacher.Email</td>
+                <td>@teacher.PhoneNumber</td>
+                <td>@teacher.Gender</td>
+                <td>@teacher.DateOfBirth.ToShortDateString()</td>
+                <td>@teacher.subjects?.Name</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@t.Id" class="btn btn-sm btn-danger">Delete</a>
+                    @if (!string.IsNullOrEmpty(teacher.ImagePath))
+                    {
+                        <img src="@teacher.ImagePath" width="60" height="60" style="object-fit:cover;" />
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@teacher.Id">Details</a>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@teacher.Id">Edit</a>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete(@teacher.Id)">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="deleteForm" asp-action="Delete" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this teacher?
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="teacherIdInput" name="id" />
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            document.getElementById("teacherIdInput").value = id;
+            var deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+            deleteModal.show();
+        }
+    </script>
+}

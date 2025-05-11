@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,11 +8,9 @@
     <link rel="stylesheet" href="~/css/CreateStudent.css" />
     <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
 
-    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         body {
-            background-color: #ffffff;
+            background-color: #ffffff; /* خلفية الصفحة الرئيسية بيضاء */
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #333333;
         }
@@ -20,7 +18,8 @@
         .main-container {
             max-width: 1200px;
             margin: 40px auto;
-            padding: 0 20px;
+            padding: 0 20px; /* تم تقليل الحشو هنا لأن الكارد الداخلي سيحصل على حشو */
+            color: #333333;
         }
 
         .page-title {
@@ -31,18 +30,21 @@
             color: #333333;
         }
 
-        .form-container {
+        .form-container { /* هذا هو الكارد الذي سيحمل العمودين */
             display: flex;
             flex-wrap: wrap;
-            gap: 40px;
-            background-color: #e0f7fa; /* لون خلفية سماوي */
-            padding: 20px; /* تأكد من إضافة padding لتوفير مساحة داخل الفورم */
-            border-radius: 8px; /* اختياري، لجعل الحواف دائرية */
+            gap: 40px; /* المسافة بين العمودين الداخليين */
+            background-color: rgb(193, 229, 231); /* لون الخلفية للكارد الكبير  */
+            padding: 30px; /* حشو داخلي للكارد الكبير */
+            border-radius: 10px; /* حواف دائرية للكارد الكبير */
+            /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */ /* يمكنك إضافة ظل خفيف إذا أردت */
         }
 
-        .form-section {
+        .form-section { /* العمود الداخلي (الأيسر أو الأيمن) */
             flex: 1;
             min-width: 300px;
+            /* تمت إزالة الخلفية والحشو والحدود من هنا */
+            /* background-color: transparent; */ /* سيكون شفافًا ليعرض خلفية .form-container */
         }
 
         .section-title {
@@ -69,13 +71,14 @@
             border: 1px solid #dee2e6;
             border-radius: 6px;
             font-size: 16px;
+            background-color: #fff; /* لضمان أن حقول الإدخال لها خلفية بيضاء فوق خلفية الكارد */
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
+            .form-control:focus {
+                outline: none;
+                border-color: #80bdff;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
 
         .gender-options {
             display: flex;
@@ -86,7 +89,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 20px;
+            /* margin-top: 20px; */ /* لا حاجة لهامش علوي هنا إذا كان .form-section لا يحتوي على padding خاص به */
         }
 
         .photo-container {
@@ -95,17 +98,17 @@
             border-radius: 50%;
             overflow: hidden;
             margin-bottom: 15px;
-            background-color: #f0f0f0;
+            background-color: #e9ecef; /* يمكن تغيير هذا ليتناسب */
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+            .photo-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
 
         .upload-btn {
             background-color: #ffffff;
@@ -118,30 +121,33 @@
             transition: all 0.2s;
         }
 
-        .upload-btn:hover {
-            background-color: #f8f9fa;
-        }
+            .upload-btn:hover {
+                background-color: #e9ecef;
+            }
 
         .action-buttons {
-            display: flex;
-            justify-content: center;
-           
-            gap: 10px;
+            display: flex; /* Keep flex */
+            flex-direction: column; /* Stack items vertically */
+            /* justify-content: center; */ /* No longer needed for horizontal centering with full width */
+            gap: 15px; /* Adjust gap for vertical spacing */
             margin-top: 40px;
+            width: 100%;
+            align-items: stretch; /* Make flex items (buttons) stretch to fill the container width */
         }
 
         .btn-save {
-            background-color: #198754;
+            background-color: #007bff; /* Change as desired */
             color: white;
             border: none;
             border-radius: 6px;
             padding: 10px 24px;
             font-size: 16px;
             cursor: pointer;
+            width: 100%; /* Make button take full width */
         }
 
         .btn-cancel {
-            background-color: #6c757d;
+            background-color: #dc3545; /* Change as desired */
             color: white;
             border: none;
             border-radius: 6px;
@@ -149,9 +155,12 @@
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
+            display: block; /* Ensure the link behaves like a block element to take full width */
+            text-align: center; /* Center the text inside the link */
+            width: 100%; /* Make button take full width */
         }
 
-        .parent-info {
+        .parent-info-group {
             margin-top: 30px;
         }
 
@@ -174,7 +183,6 @@
             @Html.AntiForgeryToken()
 
             <div class="form-container">
-                <!-- Left Column - Student Information -->
                 <div class="form-section">
                     <h2 class="section-title">Student Information</h2>
 
@@ -198,52 +206,8 @@
                         <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" required />
                     </div>
 
-                    <!-- Parent Information -->
-                    <div class="parent-info">
-                        <h2 class="section-title">Parent Information</h2>
-
-                        <div class="form-group">
-                            <label for="parentName" class="form-label">Parent Name</label>
-                            <input type="text" class="form-control" id="parentName" name="ParentName" value="@Model.ParentName" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parentEmail" class="form-label">Parent Email</label>
-                            <input type="email" class="form-control" id="parentEmail" name="ParentEmail" value="@Model.ParentEmail" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parentPhone" class="form-label">Parent Phone</label>
-                            <input type="tel" class="form-control" id="parentPhone" name="ParentPhone" value="@Model.ParentPhone" required />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column - Additional Information -->
-                <div class="form-section">
-                    <!-- Student Photo -->
-                    <div class="student-photo">
-                        <div class="photo-container" id="photoContainer">
-                            <div class="default-image" id="defaultIcon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <img id="photoPreview" style="display: none;" alt="Student Photo">
-                        </div>
-                        <input type="file" id="studentImage" name="StudentImage" accept="image/*" style="display: none;" />
-                        <button type="button" class="upload-btn" id="uploadBtn">Upload Photo</button>
-                    </div>
-
                     <div class="form-group">
                         <label for="grade" class="form-label">Grade</label>
-                        @* <select class="form-control" id="grade" name="Grade" required>
-                            <option value="" disabled>Select Grade</option>
-                            <option value="Grade 1" @(Model.Grade == "Grade 1" ? "selected" : "")>Grade 1</option>
-                            <option value="Grade 2" @(Model.Grade == "Grade 2" ? "selected" : "")>Grade 2</option>
-                            <option value="Grade 3" @(Model.Grade == "Grade 3" ? "selected" : "")>Grade 3</option>
-                            <option value="Grade 4" @(Model.Grade == "Grade 4" ? "selected" : "")>Grade 4</option>
-                            <option value="Grade 5" @(Model.Grade == "Grade 5" ? "selected" : "")>Grade 5</option>
-                            <option value="Grade 6" @(Model.Grade == "Grade 6" ? "selected" : "")>Grade 6</option>
-                        </select> *@
                         <input type="text" class="form-control" id="Grade" name="Grade" value="@Model.Grade" required />
                     </div>
 
@@ -265,20 +229,46 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="Password" required />
+                <div class="form-section">
+                    <h2 class="section-title">Student Photo</h2>
+                    <div class="student-photo">
+                        <div class="photo-container" id="photoContainer">
+                            <div class="default-image" id="defaultIcon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <img id="photoPreview" style="display: none;" alt="Student Photo">
+                        </div>
+                        <input type="file" id="studentImage" name="StudentImage" accept="image/*" style="display: none;" />
+                        <button type="button" class="upload-btn" id="uploadBtn">Upload Photo</button>
                     </div>
 
-                    
+                    <div class="parent-info-group">
+                        <h2 class="section-title">Parent Information</h2>
+                        <div class="form-group">
+                            <label for="parentName" class="form-label">Parent Name</label>
+                            <input type="text" class="form-control" id="parentName" name="ParentName" value="@Model.ParentName" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parentEmail" class="form-label">Parent Email</label>
+                            <input type="email" class="form-control" id="parentEmail" name="ParentEmail" value="@Model.ParentEmail" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parentPhone" class="form-label">Parent Phone</label>
+                            <input type="tel" class="form-control" id="parentPhone" name="ParentPhone" value="@Model.ParentPhone" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <a asp-action="Index" class="btn-cancel">Cancel</a>
                 </div>
             </div>
 
-            <div class="action-buttons">
-                <button type="submit" class="btn-save ">Save Changes</button>
-                <a href="/Students" class="btn-cancel">Cancel</a>
-            </div>
+           
         </form>
     </div>
 

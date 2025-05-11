@@ -1,40 +1,61 @@
-﻿@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
+@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
 
-<h2>Create New Teacher</h2>
+@{
+    ViewData["Title"] = "Add New Teacher";
+}
 
-<form method="post">
-    @Html.AntiForgeryToken()
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" enctype="multipart/form-data">
     <div class="form-group">
-        <label for="FullName">Full Name</label>
-        <input type="text" id="FullName" name="FullName" class="form-control" value="@Model.FullName" required />
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" id="Email" name="Email" class="form-control" value="@Model.Email" required />
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="PhoneNumber">Phone Number</label>
-        <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" required />
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="SubjectId">Subject</label>
-        <select id="SubjectId" name="SubjectId" class="form-control" required>
-            @foreach (var subject in ViewBag.Subjects as SelectList)
-            {
-                <option value="@subject.Value" >@subject.Text</option>
-            }
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" class="form-control" asp-items="ViewBag.Genders">
+            <option value="">Select Gender</option>
         </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="DateOfBirth">Date of Birth</label>
-        <input type="date" id="DateOfBirth" name="DateOfBirth" class="form-control" value="@Model.DateOfBirth" required />
+        <label asp-for="DateOfBirth"></label>
+        <input asp-for="DateOfBirth" type="date" class="form-control" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="Gender">Gender</label>
-        <select id="Gender" name="Gender" class="form-control" required>
-            <option value="Male" >Male</option>
-            <option value="Female">Female</option>
+        <label asp-for="SubjectId"></label>
+        <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Subjects">
+            <option value="">Select Subject</option>
         </select>
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Create</button>
+
+    <div class="form-group">
+        <label asp-for="StudentImage"></label>
+        <input asp-for="StudentImage" type="file" class="form-control" />
+        <span asp-validation-for="StudentImage" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -44,7 +44,19 @@ namespace StudentTrackingSystem.BLL.Repositories
             _context.SaveChanges();
         }
 
-         
+        public async Task<IEnumerable<Teatcher>> GetAllWithSubjectAsync()
+        {
+            return await _context.Teatchers
+                                 .Include(t => t.subjects)
+                                 .ToListAsync();
+        }
+        public async Task<Teatcher?> GetWithSubjectAsync(int id)
+        {
+            return await _context.Teatchers
+                                 .Include(t => t.subjects)
+                                 .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
 
     }
 }

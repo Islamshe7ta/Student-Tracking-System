@@ -25,6 +25,18 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
         .HasMany(s => s.Teatchers)
         .WithOne(t => t.subjects)
         .HasForeignKey(t => t.SubjectId);
+
+
+
+        modelBuilder.Entity<Student>()
+                     .HasOne(s => s.Parent)
+                     .WithMany(p => p.Students)
+                     .HasForeignKey(s => s.ParentId);
+
         }
+
+  
+
+
     }
 }

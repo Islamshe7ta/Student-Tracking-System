@@ -22,7 +22,7 @@ namespace StudentTrackingSystem.DAL.Models
         [Phone]
         public string PhoneNumber { get; set; }
 
-        public string Subject { get; set; }  // المادة اللي بيشرحها مثلاً
+        //public string? Subject { get; set; }  // المادة اللي بيشرحها مثلاً
 
         public string Gender { get; set; }
 
@@ -33,5 +33,6 @@ namespace StudentTrackingSystem.DAL.Models
 
         // Navigation Property
         public Subject subjects { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

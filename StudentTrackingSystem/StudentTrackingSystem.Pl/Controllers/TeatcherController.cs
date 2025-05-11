@@ -1,159 +1,172 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.PL.DTOs;
 
-public class TeatcherController : Controller
+namespace StudentTrackingSystem.PL.Controllers
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public TeatcherController(IUnitOfWork unitOfWork)
+    public class TeatcherController : Controller
     {
-        _unitOfWork = unitOfWork;
-    }
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-    // عرض قائمة المدرسين
-    public async Task<IActionResult> Index()
-    {
-        var teachers = await _unitOfWork.TeatcherRepository.GetAllAsync();
-        return View(teachers);
-    }
-
-    // عرض صفحة إنشاء مدرس جديد
-    [HttpGet]
-    public async Task<IActionResult> Create()
-    {
-        await LoadSubjectsIntoViewBag();
-        return View(new TeatcherDTO());
-    }
-
-    // إضافة مدرس جديد (POST)
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(TeatcherDTO dto)
-    {
-        if (!ModelState.IsValid)
+        public TeatcherController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-            await LoadSubjectsIntoViewBag(dto.SubjectId);
+            _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var teachers = await _unitOfWork.TeatcherRepository.GetAllWithSubjectAsync();
+            return View(teachers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            await LoadDropDowns();
+            return View(new TeatcherDTO());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(TeatcherDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadDropDowns();
+                return View(dto);
+            }
+
+            string? imagePath = null;
+            if (dto.StudentImage != null)
+            {
+                var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploads);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.StudentImage.CopyToAsync(fileStream);
+                }
+
+                imagePath = "/uploads/" + fileName;
+            }
+
+            var teacher = new Teatcher
+            {
+                FullName = dto.FullName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                SubjectId = dto.SubjectId,
+                DateOfBirth = dto.DateOfBirth,
+                Gender = dto.Gender,
+                ImagePath = imagePath
+            };
+
+            await _unitOfWork.TeatcherRepository.AddAsync(teacher);
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null) return NotFound();
+
+            var dto = new TeatcherDTO
+            {
+                Id = teacher.Id,
+                FullName = teacher.FullName,
+                Email = teacher.Email,
+                PhoneNumber = teacher.PhoneNumber,
+                SubjectId = teacher.SubjectId,
+                DateOfBirth = teacher.DateOfBirth,
+                Gender = teacher.Gender,
+                ImagePath = teacher.ImagePath
+            };
+
+            await LoadDropDowns(dto.SubjectId, dto.Gender);
             return View(dto);
         }
 
-        var teacher = new Teatcher
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, TeatcherDTO dto)
         {
-            FullName = dto.FullName,
-            Email = dto.Email,
-            PhoneNumber = dto.PhoneNumber,
-            SubjectId = dto.SubjectId,
-            DateOfBirth = dto.DateOfBirth,
-            Gender = dto.Gender
-        };
+            if (!ModelState.IsValid)
+            {
+                await LoadDropDowns(dto.SubjectId, dto.Gender);
+                return View(dto);
+            }
 
-        await _unitOfWork.TeatcherRepository.AddAsync(teacher);
-        await _unitOfWork.CompleteAsync();
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null) return NotFound();
 
-        return RedirectToAction("Index");
-    }
+            teacher.FullName = dto.FullName;
+            teacher.Email = dto.Email;
+            teacher.PhoneNumber = dto.PhoneNumber;
+            teacher.SubjectId = dto.SubjectId;
+            teacher.DateOfBirth = dto.DateOfBirth;
+            teacher.Gender = dto.Gender;
 
-    // عرض صفحة تعديل مدرس
-    public async Task<IActionResult> Edit(int id)
-    {
-        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-        if (teacher == null)
-        {
-            return NotFound();
+            if (dto.StudentImage != null)
+            {
+                var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploads);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.StudentImage.CopyToAsync(fileStream);
+                }
+
+                teacher.ImagePath = "/uploads/" + fileName;
+            }
+
+            _unitOfWork.TeatcherRepository.Update(teacher);
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        var dto = new TeatcherDTO
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            Id = teacher.Id,
-            FullName = teacher.FullName,
-            Email = teacher.Email,
-            PhoneNumber = teacher.PhoneNumber,
-            SubjectId = teacher.SubjectId,
-            DateOfBirth = teacher.DateOfBirth,
-            Gender = teacher.Gender
-        };
+            var teacher = await _unitOfWork.TeatcherRepository.GetWithSubjectAsync(id);
+            if (teacher == null)
+                return NotFound();
 
-        await LoadSubjectsIntoViewBag(dto.SubjectId);
-        return View(dto);
-    }
-
-    // تعديل مدرس (POST)
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, TeatcherDTO dto)
-    {
-        if (!ModelState.IsValid)
-        {
-            await LoadSubjectsIntoViewBag(dto.SubjectId);
-            return View(dto);
+            return View(teacher);
         }
 
-        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-        if (teacher == null)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
         {
-            return NotFound();
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
+            if (teacher == null)
+                return NotFound();
+
+            _unitOfWork.TeatcherRepository.Delete(teacher);
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        teacher.FullName = dto.FullName;
-        teacher.Email = dto.Email;
-        teacher.PhoneNumber = dto.PhoneNumber;
-        teacher.SubjectId = dto.SubjectId;
-        teacher.DateOfBirth = dto.DateOfBirth;
-        teacher.Gender = dto.Gender;
-
-        _unitOfWork.TeatcherRepository.Update(teacher);
-        await _unitOfWork.CompleteAsync();
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    // عرض تفاصيل مدرس
-    public async Task<IActionResult> Details(int id)
-    {
-        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-        if (teacher == null)
+        private async Task LoadDropDowns(int? selectedSubjectId = null, string? selectedGender = null)
         {
-            return NotFound();
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+            ViewBag.Subjects = new SelectList(subjects, "Id", "Name", selectedSubjectId);
+
+            var genders = new List<string> { "Male", "Female" };
+            ViewBag.Genders = new SelectList(genders, selectedGender);
         }
-
-        return View(teacher);
-    }
-
-    // عرض صفحة حذف مدرس
-    public async Task<IActionResult> Delete(int id)
-    {
-        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-        if (teacher == null)
-        {
-            return NotFound();
-        }
-
-        return View(teacher);
-    }
-
-    // تأكيد حذف المدرس
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-        if (teacher == null)
-        {
-            return NotFound();
-        }
-
-        _unitOfWork.TeatcherRepository.Delete(teacher);
-        await _unitOfWork.CompleteAsync();
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    // تحميل المواد في الـ ViewBag
-    private async Task LoadSubjectsIntoViewBag(object selectedSubjectId = null)
-    {
-        var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
-        ViewBag.Subjects = new SelectList(subjects, "Id", "Name", selectedSubjectId);
     }
 }

@@ -1,22 +1,18 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model StudentTrackingSystem.DAL.Models.Teatcher
+﻿@model StudentTrackingSystem.DAL.Models.Teatcher
 
 @{
-    ViewData["Title"] = "Teatcher Details";
+    ViewData["Title"] = "Teacher Details";
 }
 
-<h2>Teatcher Details</h2>
+<h2>Teacher Details</h2>
 
 <div>
-    <strong>Full Name:</strong> @Model.FullName <br />
-    <strong>Email:</strong> @Model.Email  <br />
-    <strong>Phone:</strong> @Model.PhoneNumber <br />
-    <strong>Subject:</strong> @Model.Subject <br />
+    <p><strong>Name:</strong> @Model.FullName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+    <p><strong>Gender:</strong> @Model.Gender</p>
+    <p><strong>Subject:</strong> @Model.subjects?.Name</p>
+    <p><strong>Date of Birth:</strong> @Model.DateOfBirth.ToShortDateString()</p>
 </div>
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-<a asp-action="Index" class="btn btn-secondary">Back</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

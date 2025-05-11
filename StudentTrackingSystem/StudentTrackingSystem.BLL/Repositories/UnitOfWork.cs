@@ -1,5 +1,6 @@
 ﻿using StudentTrackingSystem.BLL.Interfaces;
 using StudentTrackingSystem.DAL.Data.Contexts;
+using StudentTrackingSystem.DAL.Models;
 
 namespace StudentTrackingSystem.BLL.Repositories
 {
@@ -25,6 +26,11 @@ namespace StudentTrackingSystem.BLL.Repositories
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();
+        }
+
+        public Task<IEnumerable<Teatcher>> GetAllWithSubjectAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 
