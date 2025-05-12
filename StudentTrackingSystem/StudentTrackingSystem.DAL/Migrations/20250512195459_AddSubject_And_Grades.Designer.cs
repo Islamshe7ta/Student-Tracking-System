@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentTrackingSystem.DAL.Data.Contexts;
 
@@ -11,9 +12,11 @@ using StudentTrackingSystem.DAL.Data.Contexts;
 namespace StudentTrackingSystem.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250512195459_AddSubject_And_Grades")]
+    partial class AddSubject_And_Grades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,39 +185,6 @@ namespace StudentTrackingSystem.DAL.Migrations
                     b.ToTable("Teatchers");
                 });
 
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.TeatcherSubjectGrade", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeatcherId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TeatcherId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GradeId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TeatcherId");
-
-                    b.HasIndex("TeatcherId1");
-
-                    b.ToTable("TeatcherSubjectGrades");
-                });
-
             modelBuilder.Entity("Student", b =>
                 {
                     b.HasOne("StudentTrackingSystem.DAL.Models.Parent", "Parent")
@@ -252,37 +222,6 @@ namespace StudentTrackingSystem.DAL.Migrations
                     b.Navigation("subjects");
                 });
 
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.TeatcherSubjectGrade", b =>
-                {
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Grade", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Teatcher", "Teatcher")
-                        .WithMany()
-                        .HasForeignKey("TeatcherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Teatcher", null)
-                        .WithMany("TeatcherSubjectGrades")
-                        .HasForeignKey("TeatcherId1");
-
-                    b.Navigation("Grade");
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("Teatcher");
-                });
-
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Parent", b =>
                 {
                     b.Navigation("Students");
@@ -291,11 +230,6 @@ namespace StudentTrackingSystem.DAL.Migrations
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Subject", b =>
                 {
                     b.Navigation("Teatchers");
-                });
-
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Teatcher", b =>
-                {
-                    b.Navigation("TeatcherSubjectGrades");
                 });
 #pragma warning restore 612, 618
         }

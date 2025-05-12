@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.Rendering;
+using StudentTrackingSystem.DAL.Models;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -17,21 +19,19 @@ namespace StudentTrackingSystem.PL.DTOs
         [Phone]
         public string PhoneNumber { get; set; }
 
-        //public string Subject { get; set; }
-
         public string Gender { get; set; }
+
         public int SubjectId { get; set; }
 
         public string? ImagePath { get; set; }
 
         public IFormFile? TeacherImage { get; set; }
 
-        // Navigation Property
+        // Removed unnecessary navigation property
         // public Subject subjects { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
     }
 }
-
 
