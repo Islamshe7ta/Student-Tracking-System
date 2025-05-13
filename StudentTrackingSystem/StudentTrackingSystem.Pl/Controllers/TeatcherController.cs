@@ -41,16 +41,16 @@ namespace StudentTrackingSystem.PL.Controllers
             }
 
             string? imagePath = null;
-            if (dto.StudentImage != null)
+            if (dto.TeacherImage != null)
             {
                 var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploads);
-                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.TeacherImage.FileName);
                 var filePath = Path.Combine(uploads, fileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.StudentImage.CopyToAsync(fileStream);
+                    await dto.TeacherImage.CopyToAsync(fileStream);
                 }
 
                 imagePath = "/uploads/" + fileName;
@@ -115,16 +115,16 @@ namespace StudentTrackingSystem.PL.Controllers
             teacher.DateOfBirth = dto.DateOfBirth;
             teacher.Gender = dto.Gender;
 
-            if (dto.StudentImage != null)
+            if (dto.TeacherImage != null)
             {
                 var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploads);
-                var fileName = Guid.NewGuid() + Path.GetExtension(dto.StudentImage.FileName);
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.TeacherImage.FileName);
                 var filePath = Path.Combine(uploads, fileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.StudentImage.CopyToAsync(fileStream);
+                    await dto.TeacherImage.CopyToAsync(fileStream);
                 }
 
                 teacher.ImagePath = "/uploads/" + fileName;

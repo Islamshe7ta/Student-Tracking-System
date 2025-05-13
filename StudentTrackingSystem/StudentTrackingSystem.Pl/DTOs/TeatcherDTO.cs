@@ -24,7 +24,7 @@ namespace StudentTrackingSystem.PL.DTOs
 
         public string? ImagePath { get; set; }
 
-        public IFormFile? StudentImage { get; set; }
+        public IFormFile? TeacherImage { get; set; }
 
         // Navigation Property
         // public Subject subjects { get; set; }
