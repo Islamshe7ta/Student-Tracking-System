@@ -72,7 +72,7 @@ namespace StudentTrackingSystem.DAL.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Grade", b =>
@@ -89,7 +89,7 @@ namespace StudentTrackingSystem.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Grades");
+                    b.ToTable("Grades", (string)null);
                 });
 
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Parent", b =>
@@ -115,7 +115,7 @@ namespace StudentTrackingSystem.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parent");
+                    b.ToTable("Parent", (string)null);
                 });
 
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Subject", b =>
@@ -138,7 +138,7 @@ namespace StudentTrackingSystem.DAL.Migrations
 
                     b.HasIndex("GradeId");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Teatcher", b =>
@@ -179,40 +179,7 @@ namespace StudentTrackingSystem.DAL.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Teatchers");
-                });
-
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.TeatcherSubjectGrade", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeatcherId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TeatcherId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GradeId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TeatcherId");
-
-                    b.HasIndex("TeatcherId1");
-
-                    b.ToTable("TeatcherSubjectGrades");
+                    b.ToTable("Teatchers", (string)null);
                 });
 
             modelBuilder.Entity("Student", b =>
@@ -252,37 +219,6 @@ namespace StudentTrackingSystem.DAL.Migrations
                     b.Navigation("subjects");
                 });
 
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.TeatcherSubjectGrade", b =>
-                {
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Grade", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Teatcher", "Teatcher")
-                        .WithMany()
-                        .HasForeignKey("TeatcherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentTrackingSystem.DAL.Models.Teatcher", null)
-                        .WithMany("TeatcherSubjectGrades")
-                        .HasForeignKey("TeatcherId1");
-
-                    b.Navigation("Grade");
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("Teatcher");
-                });
-
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Parent", b =>
                 {
                     b.Navigation("Students");
@@ -291,11 +227,6 @@ namespace StudentTrackingSystem.DAL.Migrations
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Subject", b =>
                 {
                     b.Navigation("Teatchers");
-                });
-
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Teatcher", b =>
-                {
-                    b.Navigation("TeatcherSubjectGrades");
                 });
 #pragma warning restore 612, 618
         }
