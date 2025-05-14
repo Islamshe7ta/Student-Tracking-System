@@ -1,116 +1,148 @@
-﻿@* 
-@{
-    ViewData["Title"] = "CheckYourInbox";
-    Layout = "~/Views/Shared/_AuthLayout.cshtml";
-}
-
-
-
-<div class="main-agileinfo">
-<div class="agileits-top">
-	
-
-	<p> Check Your Inbox</p>
-	
-</div>
-
-</div> *@
-@{
+﻿@{
     ViewData["Title"] = "Check Your Inbox";
-    // Layout = "~/Views/Shared/_AuthLayout.cshtml";
     Layout = null;
 }
 
-<div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-lg text-center p-4" style="max-width: 500px; border-radius: 15px;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Inbox</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3a7bd5;
+            --secondary-color: #2e3192;
+            --accent-color: #00d2ff;
+            --text-primary: #333;
+            --text-secondary: #6c757d;
+            --white: #ffffff;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .email-card {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-width: 550px;
+            width: 90%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-header {
+            background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+            height: 8px;
+        }
+
+        .card-body {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .icon-container {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .envelope-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 2;
+        }
+
+        .icon-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background-color: rgba(58, 123, 213, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .message {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-home {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+            .btn-home:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
+                background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+                color: var(--white);
+            }
+
+        .card-footer {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+            .card-footer p {
+                color: var(--text-secondary);
+                margin-bottom: 0;
+                font-size: 0.9rem;
+            }
+
+        
+    </style>
+</head>
+<body>
+    <div class="email-card">
+        <div class="card-header"></div>
         <div class="card-body">
-            <i class="fas fa-envelope-open-text fa-4x text-primary mb-2"></i>
-            <h2 class="card-title text-dark">Check Your Inbox</h2>
-            <p class="text-muted">We’ve sent you an email. Please check your inbox and follow the instructions to proceed.</p>
-            <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+            <div class="icon-container">
+                <div class="icon-bg"></div>
+                <i class="fas fa-envelope-open-text envelope-icon"></i>
+            </div>
+            <h1 class="title">Check Your Inbox</h1>
+            <p class="message">We've sent a verification email to your inbox. Please check your email and follow the instructions to complete the process.</p>
+            <a href="/" class="btn btn-home">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+        </div>
+        <div class="card-footer">
+            <p>Didn't receive an email? <a href="#" class="text-decoration-none">Resend email</a> or <a href="#" class="text-decoration-none">Contact support</a></p>
         </div>
     </div>
-</div>
 
-@section Validation
-{
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-}
-
-<style>
-    body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        font-family: Arial, sans-serif;
-    }
-
-    .main-agileinfo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .agileits-top {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 100%;
-        max-width: 400px;
-        backdrop-filter: blur(10px);
-    }
-
-    .text {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: none;
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        font-size: 16px;
-    }
-
-        .text::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-    .wthree-text {
-        text-align: left;
-        font-size: 14px;
-        margin-bottom: 15px;
-        color: white;
-    }
-
-    input[type="submit"] {
-        background: #ff4081;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-
-        input[type="submit"]:hover {
-            background: #e91e63;
-        }
-
-    p {
-        margin-top: 10px;
-        font-size: 14px;
-        color: white;
-    }
-
-        p a {
-            color: #ff4081;
-            text-decoration: none;
-        }
-
-            p a:hover {
-                text-decoration: underline;
-            }
-</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

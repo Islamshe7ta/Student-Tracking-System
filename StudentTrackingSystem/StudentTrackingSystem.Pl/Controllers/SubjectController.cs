@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.BLL.Interfaces;
@@ -87,7 +88,7 @@ namespace StudentTrackingSystem.Controllers
     //        return RedirectToAction(nameof(Index));
     //    }
     //}
-
+    [Authorize]
     public class SubjectController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
