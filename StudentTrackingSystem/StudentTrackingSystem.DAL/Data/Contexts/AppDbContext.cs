@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using StudentTrackingSystem.DAL.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.Models; // تأكد إن ده موجود علشان يلاقي Student
 
@@ -18,7 +20,7 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
     //        // Additional model configuration if needed  
     //    }
     //}
-    public class AppDbContext : DbContext
+    public class AppDbContext : /*DbContext*/ IdentityDbContext<AppUser> // لو بتستخدم Identity
     {
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Subject> Subjects { get; set; } // ✅ ضيف ده

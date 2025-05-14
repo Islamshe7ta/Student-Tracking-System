@@ -13,7 +13,7 @@ using StudentTrackingSystem.DAL.Data.Contexts;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class StudentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
