@@ -14,7 +14,7 @@ namespace StudentTrackingSystem.DAL.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool IsAgree { get; set; }
-        public string? ImageName { get; set; }  // 🖼️ إضافة اسم الصورة
+        public string? ImageName { get; set; }  
        
 
     }
