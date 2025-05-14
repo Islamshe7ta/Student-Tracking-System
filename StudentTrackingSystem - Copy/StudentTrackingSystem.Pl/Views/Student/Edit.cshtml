@@ -1,0 +1,422 @@
+﻿@using StudentTrackingSystem.Models
+@using StudentTrackingSystem.PL.DTOs
+@model StudentDTO
+
+@{
+    ViewData["Title"] = "Edit Student";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* يمكنك الاحتفاظ بملف CSS الخاص بهذه الصفحة إذا كان يحتوي على أنماط إضافية خاصة بها *@
+    <link rel="stylesheet" href="~/css/EditStudent.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+    @* إضافة مكتبة Font Awesome للأيقونة الافتراضية إذا لم تكن موجودة بالفعل *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <style>
+        /* Styles based on the Create Student page */
+        body {
+            background-color: #ffffff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #333333;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #333333;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        /* The form container wrapping the two sections */
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px; /* Space between columns */
+            background-color: rgb(193, 229, 231); /* Light blue card background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        /* The inner columns */
+        .form-section {
+            flex: 1; /* Allows columns to grow/shrink */
+            min-width: 300px; /* Minimum width before wrapping */
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: #333333;
+        }
+
+        /* Wrapper for each form field group */
+        .form-group {
+            margin-bottom: 25px; /* Add margin bottom here */
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333333;
+        }
+
+        /* Custom styling for form controls to match Create page */
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #fff; /* Ensure white background */
+        }
+
+        .form-select {
+            appearance: none; /* Remove default arrow */
+            -webkit-appearance: none;
+            background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3e%3cpath fill=\'none\' stroke=\'%23343a40\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'m2 5 6 6 6-6\'/%3e%3c/svg%3e');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+
+        /* Student Photo Section Styling */
+        .student-photo {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center items horizontally */
+        }
+
+        .photo-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background-color: #e9ecef; /* Placeholder background */
+            display: flex;
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+            position: relative; /* For positioning the image/icon inside */
+        }
+
+            /* Styles for the actual image and the default icon */
+            .photo-container img, .default-image {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Cover container while maintaining aspect ratio */
+                display: flex; /* Use flex to center icon content */
+                align-items: center;
+                justify-content: center;
+            }
+
+                .default-image i {
+                    font-size: 48px; /* Size of the default icon */
+                    color: #cccccc; /* Color of the default icon */
+                }
+
+        /* Style for the upload button label */
+        .upload-btn {
+            background-color: #ffffff;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 6px;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: inline-block; /* Make label act like an inline-block button */
+        }
+
+            .upload-btn:hover {
+                background-color: #e9ecef;
+            }
+
+        .parent-info-group {
+            margin-top: 30px;
+        }
+
+        /* Action Buttons Styling - Stacked and full width */
+        .action-buttons {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 15px; /* Vertical spacing between buttons */
+            margin-top: 40px;
+            width: 100%; /* Take full width of parent (form) */
+            align-items: stretch; /* Make buttons stretch to full width */
+            /* text-align: center; */ /* No longer needed on container with flex stretch */
+        }
+
+        /* Custom button styles (will be added alongside Bootstrap classes) */
+        .btn-save {
+            /* These styles will likely override Bootstrap's .btn-success */
+            background-color: #007bff; /* Example Save color */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%; /* Ensure full width */
+            text-align: center; /* Center text within the button */
+        }
+
+        .btn-cancel {
+            /* These styles will likely override Bootstrap's .btn-secondary */
+            background-color: #dc3545; /* Example Cancel color */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline */
+            display: block; /* Make link behave like a block element for full width */
+            width: 100%; /* Ensure full width */
+            text-align: center; /* Center text within the link button */
+        }
+
+        /* Helper class to hide elements */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    @* Replaced Bootstrap container with custom main-container *@
+    <div class="main-container">
+        @* Replaced h2 with h1 and applied page-title class *@
+        <h1 class="page-title">Edit Student</h1>
+
+        @* Added enctype for file upload. Kept asp-action, method, and original class. *@
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="p-4 mb-4 student-form">
+            @* Anti-Forgery Token - IMPORTANT *@
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="StudentId" />
+            <input type="hidden" asp-for="ImagePath" id="currentImagePath" /> @* Added ID for JS access *@
+
+            @* Replaced Bootstrap row with custom form-container *@
+            <div class="form-container">
+                @* First column - Replaced Bootstrap col-md-6 with custom form-section *@
+                <div class="form-section">
+                    @* Keep section title and class *@
+                    <h5 class="section-title mb-3">Student Information</h5>
+
+                    @* Full Name *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    @* Email Address *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="EmailAddress" class="form-label">Email Address</label>
+                        <input asp-for="EmailAddress" class="form-control" type="email" /> @* Added type="email" *@
+                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                    </div>
+
+                    @* Phone Number *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="PhoneNo" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNo" class="form-control" type="tel" /> @* Added type="tel" *@
+                        <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                    </div>
+
+                    @* Address *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    @* Grade - Moved from second column to first *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="Grade" class="form-label">Grade</label>
+                        <select asp-for="Grade" class="form-select">
+                            <option value="">Select Grade</option> @* Removed selected disabled from empty option *@
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                        </select>
+                        <span asp-validation-for="Grade" class="text-danger"></span>
+                    </div>
+
+                    @* Date of Birth - Moved from second column to first *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <input asp-for="DateOfBirth" class="form-control" type="date" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    @* Gender Select - Kept the original select structure and classes *@
+                    <div class="mb-3 form-group">
+                        <label asp-for="Gender" class="form-label">Gender</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">Select Gender</option> @* Removed selected disabled from empty option *@
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                    @* If you prefer Radio buttons and your backend supports it, use this block instead and remove the select above.
+                      <div class="mb-3 form-group">
+                         <label class="form-label">Gender</label>
+                         <div class="gender-options">
+                             <div class="form-check">
+                                 <input class="form-check-input" type="radio" asp-for="Gender" value="Male" id="male" @(Model.Gender == "Male" ? "checked" : "") required />
+                                 <label class="form-check-label" for="male">Male</label>
+                             </div>
+                             <div class="form-check">
+                                 <input class="form-check-input" type="radio" asp-for="Gender" value="Female" id="female" @(Model.Gender == "Female" ? "checked" : "") required />
+                                 <label class="form-check-label" for="female">Female</label>
+                             </div>
+                         </div>
+                         <span asp-validation-for="Gender" class="text-danger"></span>
+                      </div>
+                     *@
+
+                </div>
+
+                @* Second column - Replaced Bootstrap col-md-6 with custom form-section *@
+                <div class="form-section">
+                    @* Additional Information title removed as Grade/DOB moved to first column *@
+                    @* <h5 class="section-title mb-3">Additional Information</h5> *@
+
+                    @* Student Photo Section - Rebuilt with custom structure, keeping original elements/classes where possible *@
+                    <h2 class="section-title">Student Photo</h2> @* Changed h5 to h2 for consistency with Create page *@
+                    @* Original Bootstrap wrapper mb-3 text-center removed, replaced by custom student-photo *@
+                    <div class="student-photo">
+                        @* Original student-image-container mb-3 removed, replaced by custom photo-container *@
+                        <div class="photo-container" id="photoContainer">
+                            @* Kept original img tag, added id="photoPreview". It will be shown/hidden by JS *@
+                            <img src="@Model.ImagePath" alt="Student Photo Preview" id="photoPreview" class="student-image-preview" />
+
+                            @* Added default icon div from Create page. It will be shown/hidden by JS *@
+                            <div class="default-image" id="defaultIcon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+
+                        @* Kept original label structure, replaced Bootstrap classes with custom upload-btn *@
+                        <label for="studentImage" class="upload-btn">
+                            @* <i class="bi bi-upload me-2"></i> -- Removed Bootstrap icon, add if needed -- *@
+                            Change Photo
+                        </label>
+                        @* Kept original file input, added id and class d-none *@
+                        <input type="file" name="studentImage" id="studentImage" class="d-none" accept="image/*" />
+                        @* Kept original helper text *@
+                        <p class="small text-muted mt-2">Leave empty to keep the current image</p>
+                    </div>
+
+
+                    <div class="parent-info-group">
+                        <h2 class="section-title">Parent Information</h2> @* Changed h5 to h2 for consistency with Create page *@
+
+                        @* Wrap each field group with form-group class (keeping mb-3) *@
+                        <div class="mb-3 form-group">
+                            <label asp-for="ParentName" class="form-label">Parent Name</label>
+                            <input asp-for="ParentName" class="form-control" />
+                            <span asp-validation-for="ParentName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-group">
+                            <label asp-for="ParentPhone" class="form-label">Parent Phone</label>
+                            <input asp-for="ParentPhone" class="form-control" type="tel" /> @* Added type="tel" *@
+                            <span asp-validation-for="ParentPhone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-group">
+                            <label asp-for="ParentEmail" class="form-label">Parent Email</label>
+                            <input asp-for="ParentEmail" class="form-control" type="email" /> @* Added type="email" *@
+                            <span asp-validation-for="ParentEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    @* Kept original button/link classes, added custom classes *@
+                    <button type="submit" class="btn btn-success btn-save">Save Changes</button>
+                    @* Kept original link structure and classes, added custom class *@
+                    <a href="@Url.Action("Index", "Student")" class="btn btn-secondary btn-cancel">Cancel</a>
+                </div>
+            </div>
+
+            @* Action Buttons Section - Replaced Bootstrap wrapper with custom action-buttons *@
+           
+        </form>
+    </div>
+
+    @* Add jQuery if not already included globally in your layout *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // --- Initial state setup on page load ---
+            // Determine whether to show the existing image or the default icon initially
+            var currentImagePath = $('#currentImagePath').val();
+            if (currentImagePath && currentImagePath.trim() !== "") {
+                $('#photoPreview').removeClass('hidden');
+                $('#defaultIcon').addClass('hidden');
+            } else {
+                 $('#photoPreview').addClass('hidden');
+                 $('#defaultIcon').removeClass('hidden');
+            }
+
+            // Trigger file input click when the styled label/button is clicked
+            $('.upload-btn').click(function() {
+                $('#studentImage').click();
+            });
+
+            // Preview selected image
+            $('#studentImage').change(function() {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#photoPreview').attr('src', e.target.result);
+                        $('#defaultIcon').addClass('hidden'); // Hide default icon
+                        $('#photoPreview').removeClass('hidden'); // Show image preview
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    // If file selection is cancelled or no file is chosen,
+                    // revert to showing the current image if it exists,
+                    // otherwise show the default icon.
+                    var currentImagePath = $('#currentImagePath').val();
+                    if (currentImagePath && currentImagePath.trim() !== "") {
+                        $('#photoPreview').attr('src', currentImagePath).removeClass('hidden');
+                        $('#defaultIcon').addClass('hidden');
+                    } else {
+                        $('#photoPreview').addClass('hidden');
+                        $('#photoPreview').attr('src', ''); // Clear image source
+                        $('#defaultIcon').removeClass('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

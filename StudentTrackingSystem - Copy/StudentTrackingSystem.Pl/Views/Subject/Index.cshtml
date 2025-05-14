@@ -1,0 +1,74 @@
+﻿@model IEnumerable<StudentTrackingSystem.DAL.Models.Subject>
+@{
+    ViewData["Title"] = "Subjects";
+}
+
+<h2 class="my-4">Subjects List</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Add New Subject</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subject in Model)
+        {
+            <tr>
+                <td>@subject.Name</td>
+                <td>@subject.Grade.Name</td>
+                <td>
+                    
+                    <button type="button"
+                            class="btn btn-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-subject-id="@subject.Id"
+                            data-subject-name="@subject.Name">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ======= Delete Confirmation Modal ======= -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="deleteForm" asp-action="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Subject</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="subjectId" name="id" />
+                    <p>Are you sure you want to delete <strong id="subjectName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const subjectId = button.getAttribute('data-subject-id');
+            const subjectName = button.getAttribute('data-subject-name');
+
+            document.getElementById('subjectId').value = subjectId;
+            document.getElementById('subjectName').textContent = subjectName;
+        });
+    </script>
+}
