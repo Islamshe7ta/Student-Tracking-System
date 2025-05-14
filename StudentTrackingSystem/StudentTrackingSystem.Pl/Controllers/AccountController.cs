@@ -13,13 +13,18 @@ namespace StudentTrackingSystem.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly AppDbContext appDb;
+        
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager , AppDbContext appDb )
+        private readonly AppDbContext appDb;
+        private readonly EmailService _emailService;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager , AppDbContext appDb,  EmailService emailService )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             this.appDb = appDb;
+            _emailService = emailService;
+
+ 
         }
 
         #region SignUp
@@ -170,8 +175,13 @@ namespace StudentTrackingSystem.PL.Controllers
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
 
-                    // بدل ما تبعت لينك، ممكن تطبعه في اللوج أو تخزنه في ViewBag للتجربة
-                    ViewBag.ResetLink = url;
+                    // هنا بنبعت الإيميل
+                    await _emailService.SendEmailAsync(
+                        model.Email,
+                        "Reset Your Password",
+                        $"<p>Hello {user.FirstName},</p><p>Click the link below to reset your password:</p><p><a href='{url}'>Reset Password</a></p>"
+                    );
+
                     return View("CheckYourInbox");
                 }
             }
@@ -179,6 +189,7 @@ namespace StudentTrackingSystem.PL.Controllers
             ModelState.AddModelError("", "Invalid Reset Password !!");
             return View("ForgetPassword", model);
         }
+
         #endregion
 
         #region CheckYourInbox

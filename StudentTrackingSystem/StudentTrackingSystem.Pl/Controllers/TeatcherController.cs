@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
@@ -6,6 +7,7 @@ using StudentTrackingSystem.PL.DTOs;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
+    [Authorize]
     public class TeatcherController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

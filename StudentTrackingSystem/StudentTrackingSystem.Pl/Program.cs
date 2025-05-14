@@ -5,6 +5,7 @@ using StudentTrackingSystem.BLL.Repositories;
 using StudentTrackingSystem.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using StudentTrackingSystem.DAL.Models;
+using StudentTrackingSystem.Pl.Services;
 
 
 namespace StudentTrackingSystem
@@ -24,7 +25,7 @@ namespace StudentTrackingSystem
             builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
             builder.Services.AddScoped<IParentRepository, ParentRepository>();
             builder.Services.AddScoped<IGradeRepository, GradeRepository>();
-           
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             // Ensure the 'UseSqlServer' method is available by adding the correct using directive
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -41,6 +42,8 @@ namespace StudentTrackingSystem
                 options.AccessDeniedPath = "/Account/AccessDenied"; // ← اختياري، لو عامل صفحة رفض صلاحية
             });
 
+
+            builder.Services.AddScoped<EmailService>();
 
             //builder.Services.AddAutoMapper(typeof(StudentMapper));
 
@@ -69,10 +72,9 @@ namespace StudentTrackingSystem
 
             app.UseAuthorization();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
+                app.MapControllerRoute(
+         name: "default",
+         pattern: "{controller=Account}/{action=SignIn}/{id?}");
             app.Run();
         }
     }
