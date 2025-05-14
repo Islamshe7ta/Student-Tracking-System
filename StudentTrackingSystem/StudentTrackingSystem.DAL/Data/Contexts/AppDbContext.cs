@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.DAL.Models;
-using StudentTrackingSystem.Models; // تأكد إن ده موجود علشان يلاقي Student
+using StudentTrackingSystem.Models;
+using Microsoft.AspNetCore.Identity; // تأكد إن ده موجود علشان يلاقي Student
 
 namespace StudentTrackingSystem.DAL.Data.Contexts
 {
@@ -47,6 +48,92 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
 
         }
 
+        public void DataSeed()
+        {
+            SeedUsers();
+            SeedRoles();
+            SaveChanges();
+        }
+
+        private void SeedRoles()
+        {
+            var adminRole = Roles.Find(Consts.Constants.AdminRoleId);
+            var TeatcherRoleId = Roles.Find(Consts.Constants.TeatcherRoleId);
+            var StudentRoleId = Roles.Find(Consts.Constants.StudentRoleId);
+            if (adminRole == null)
+            {
+                Roles.Add(new IdentityRole
+                {
+                    Name = "Admin",
+                    NormalizedName = "Admin".ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+                    Id = Consts.Constants.AdminRoleId,
+                });
+            }
+
+            if (TeatcherRoleId == null)
+            {
+                Roles.Add(new IdentityRole
+                {
+                    Name = "Teachr",
+                    NormalizedName = "Teachr".ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+                    Id = Consts.Constants.TeatcherRoleId,
+                });
+            }
+            
+            if (StudentRoleId == null)
+            {
+                Roles.Add(new IdentityRole
+                {
+                    Name = "Studnt",
+                    NormalizedName = "Studnt".ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+                    Id = Consts.Constants.StudentRoleId,
+                });
+            }
+        }
+
+
+        private void SeedUsers()
+        {
+            var userId = Guid.NewGuid().ToString("D"); 
+            var user = Users.FirstOrDefault(u => u.Email == "admin@admin.eg");
+
+            if (user != null)
+                return;
+
+            user = new AppUser
+            {
+                Id = userId,
+                Email = "admin@admin.eg",
+                UserName = "admin@admin.eg",
+                NormalizedUserName = "admin@admin.eg".ToUpper(),
+                NormalizedEmail = "admin@admin.eg".ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true,
+                PhoneNumber = "01000000000",
+                TwoFactorEnabled = false,
+                PasswordHash = null,
+                FirstName= "Ali",
+                LastName= "Mohamed",
+                SecurityStamp = Guid.NewGuid().ToString("D"),
+                ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+                IsAgree = true,
+            };
+
+            var hasher = new PasswordHasher<IdentityUser>();
+            user.PasswordHash = hasher.HashPassword(user, "P@ssw0rd");
+
+            Users.Add(user);
+
+
+            this.UserRoles.Add(new IdentityUserRole<string>
+            {
+                RoleId = Consts.Constants.AdminRoleId,
+                UserId = user.Id
+            });
+        }
     }
 }
 

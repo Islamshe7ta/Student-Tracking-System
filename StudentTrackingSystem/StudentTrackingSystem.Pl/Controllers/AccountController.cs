@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using StudentTrackingSystem.DAL.Data.Contexts;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
@@ -12,13 +13,18 @@ namespace StudentTrackingSystem.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly EmailService _emailService;
+        
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, EmailService emailService)
+        private readonly AppDbContext appDb;
+        private readonly EmailService _emailService;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager , AppDbContext appDb,  EmailService emailService )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            this.appDb = appDb;
             _emailService = emailService;
+
+ 
         }
 
         #region SignUp
@@ -34,26 +40,74 @@ namespace StudentTrackingSystem.PL.Controllers
 
                 if (user is null)
                 {
-                    user = new AppUser
-                    {
-                        UserName = model.UserName,
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Email = model.Email,
-                        IsAgree = model.IsAgree
-                    };
+                    // Check if this email exists in the Teachers table
+                    var isTeacherEmail = appDb.Teatchers.Any(t => t.Email == model.Email);
 
+                    if (isTeacherEmail)
+                    {
+                        
+
+                        user = new AppUser
+                        {
+                            UserName = model.UserName,
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            Email = model.Email,
+                            IsAgree = model.IsAgree
+                        };
+                        var result = await _userManager.CreateAsync(user, model.Password);
+                         await _userManager.AddToRoleAsync(user, "Teachr");
+
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction("SignIn");
+                        }
+
+                        foreach (var error in result.Errors)
+                            ModelState.AddModelError("", error.Description);
+                       }
+                       else
+                       {
+                       ModelState.AddModelError("", "User already exists.");
+                      }
+
+                    }
+
+
+                    // Check if this email exists in the Teachers table
+                    var isStudentEmail = appDb.Students.Any(S => S.EmailAddress == model.Email);
+
+                    if (isStudentEmail)
+                    {
+
+                        user = new AppUser
+                        {
+                            UserName = model.UserName,
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            Email = model.Email,
+                            IsAgree = model.IsAgree
+                        };
                     var result = await _userManager.CreateAsync(user, model.Password);
+                    await _userManager.AddToRoleAsync(user, "Studnt");
                     if (result.Succeeded)
+                    {
                         return RedirectToAction("SignIn");
+                    }
 
                     foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
-                }
-                else
-                {
-                    ModelState.AddModelError("", "User already exists.");
-                }
+                    }
+                   else
+                   {
+                      ModelState.AddModelError("", "User already exists.");
+                   }
+                      
+
+                  }
+
+
+                   
             }
 
             return View();
@@ -75,7 +129,20 @@ namespace StudentTrackingSystem.PL.Controllers
                 {
                     var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMy, false);
                     if (result.Succeeded)
-                        return RedirectToAction("Index", "Home");
+                    {
+                        if (await _userManager.IsInRoleAsync(user, "admin"))
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else if (await _userManager.IsInRoleAsync(user, "Teachr"))
+                        {
+                            return RedirectToAction("AllMedicationsForPharmacy", "Medican");
+                        }
+                        else if (await _userManager.IsInRoleAsync(user, "Studnt"))
+                        {
+                            return RedirectToAction("AllMedicationsForPharmacy", "Medican");
+                        }
+                    }
                 }
 
                 ModelState.AddModelError("", "Invalid login attempt.");

@@ -32,8 +32,9 @@ namespace StudentTrackingSystem
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
                     builder.Services.AddIdentity<AppUser, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
+
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
@@ -47,6 +48,14 @@ namespace StudentTrackingSystem
             //builder.Services.AddAutoMapper(typeof(StudentMapper));
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                dbContext.Database.Migrate();
+                dbContext.DataSeed();
+            }
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
