@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using StudentTrackingSystem.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.DAL.Data.Contexts;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
@@ -57,10 +58,19 @@ namespace StudentTrackingSystem.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var grades = await _unitOfWork.GradeRepository.GetAllAsync();
+
+            ViewBag.Grades = grades.Select(g => new SelectListItem
+            {
+                Value = g.Name,   // لإنك بتخزن الاسم
+                Text = g.Name
+            }).ToList();
+
             return View(new StudentDTO());
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -156,7 +166,6 @@ namespace StudentTrackingSystem.PL.Controllers
         }
 
 
-
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -183,11 +192,19 @@ namespace StudentTrackingSystem.PL.Controllers
                 Grade = student.Grade,
                 Gender = student.Gender,
                 ImagePath = student.ImagePath,
-                // Set parent data explicitly from the parent object, not from student.Parent
                 ParentName = parent?.FullName,
                 ParentPhone = parent?.PhoneNo,
                 ParentEmail = parent?.EmailAddress
             };
+
+            // ✅ تحميل قائمة الدرجات للدروب دون
+            var grades = await _unitOfWork.GradeRepository.GetAllAsync();
+            ViewBag.Grades = grades.Select(g => new SelectListItem
+            {
+                Value = g.Name,
+                Text = g.Name,
+                Selected = g.Name == studentDTO.Grade
+            }).ToList();
 
             return View(studentDTO);
         }
