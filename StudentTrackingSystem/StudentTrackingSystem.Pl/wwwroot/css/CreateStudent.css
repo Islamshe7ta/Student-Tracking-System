@@ -1,5 +1,3 @@
-﻿/* Add Student Page Styles */
- 
 body {
     background-color: #ffffff;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -7,23 +5,20 @@ body {
 }
 
 .main-container {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 40px auto;
     padding: 0 20px;
-}
-
-.page-title {
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 32px;
-    font-weight: 600;
-    color: #333333;
 }
 
 .form-container {
     display: flex;
     flex-wrap: wrap;
     gap: 40px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--neutral-bg);
+    border: 1px solid var(--neutral-border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .form-section {
@@ -32,40 +27,21 @@ body {
 }
 
 .section-title {
-    font-size: 22px;
+    font-size: 1.5rem;
     font-weight: 500;
-    margin-bottom: 25px;
-    color: #333333;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
 }
-
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #333333;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    font-size: 16px;
-}
-
-    .form-control:focus {
-        outline: none;
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
 
 .gender-options {
     display: flex;
     gap: 20px;
+    align-items: center;
+}
+.gender-options .form-check {
+    margin-bottom: 0;
 }
 
 .student-photo {
@@ -73,6 +49,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .photo-container {
@@ -81,73 +58,40 @@ body {
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 15px;
-    background-color: #f0f0f0;
+    background-color: var(--neutral-bg);
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 3px solid var(--neutral-border);
 }
 
-    .photo-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-.upload-btn {
-    background-color: #ffffff;
-    color: #007bff;
-    border: 1px solid #007bff;
-    border-radius: 6px;
-    padding: 8px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s;
+.photo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
-
-    .upload-btn:hover {
-        background-color: #f8f9fa;
-    }
-
 .action-buttons {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-top: 40px;
-}
-
-.btn-save {
-    background-color: #198754;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.btn-cancel {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    text-decoration: none;
+    padding-top: 20px;
+    border-top: 1px solid var(--neutral-border);
 }
 
 .parent-info {
     margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--neutral-border);
 }
 
 .default-image {
     width: 100px;
     height: 100px;
-    color: #cccccc;
+    color: var(--neutral-text);
     font-size: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
- 

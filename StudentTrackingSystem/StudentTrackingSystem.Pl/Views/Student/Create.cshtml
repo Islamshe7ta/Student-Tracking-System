@@ -1,293 +1,161 @@
+@using StudentTrackingSystem.PL.DTOs
+@model StudentDTO
+
+@{
+    ViewData["Title"] = "Add Student";
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <title>@ViewData["Title"] - Student Tracking System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/CreateStudent.css" />
-    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom_styles.css" /> <!-- Global custom styles -->
+    <link rel="stylesheet" href="~/css/CreateStudent.css" /> <!-- Refactored CreateStudent styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
-    <style>
-        body {
-            background-color: #ffffff; /* خلفية الصفحة الرئيسية بيضاء */
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #333333;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px; /* تم تقليل الحشو هنا لأن الكارد الداخلي سيحصل على حشو */
-            color: #333333;
-        }
-
-        .page-title {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 32px;
-            font-weight: 600;
-            color: #333333;
-        }
-
-        .form-container { /* هذا هو الكارد الذي سيحمل العمودين */
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px; /* المسافة بين العمودين الداخليين */
-            background-color: rgb(193, 229, 231); /* لون الخلفية للكارد الكبير  */
-            padding: 30px; /* حشو داخلي للكارد الكبير */
-            border-radius: 10px; /* حواف دائرية للكارد الكبير */
-            /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */ /* يمكنك إضافة ظل خفيف إذا أردت */
-        }
-
-        .form-section { /* العمود الداخلي (الأيسر أو الأيمن) */
-            flex: 1;
-            min-width: 300px;
-            /* تمت إزالة الخلفية والحشو والحدود من هنا */
-            /* background-color: transparent; */ /* سيكون شفافًا ليعرض خلفية .form-container */
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 25px;
-            color: #333333;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333333;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            font-size: 16px;
-            background-color: #fff; /* لضمان أن حقول الإدخال لها خلفية بيضاء فوق خلفية الكارد */
-        }
-
-            .form-control:focus {
-                outline: none;
-                border-color: #80bdff;
-                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-            }
-
-        .gender-options {
-            display: flex;
-            gap: 20px;
-        }
-
-        .student-photo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /* margin-top: 20px; */ /* لا حاجة لهامش علوي هنا إذا كان .form-section لا يحتوي على padding خاص به */
-        }
-
-        .photo-container {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 15px;
-            background-color: #e9ecef; /* يمكن تغيير هذا ليتناسب */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .photo-container img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-        .upload-btn {
-            background-color: #ffffff;
-            color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: 6px;
-            padding: 8px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-
-            .upload-btn:hover {
-                background-color: #e9ecef;
-            }
-
-        .action-buttons {
-            display: flex; /* Keep flex */
-            flex-direction: column; /* Stack items vertically */
-            /* justify-content: center; */ /* No longer needed for horizontal centering with full width */
-            gap: 15px; /* Adjust gap for vertical spacing */
-            margin-top: 40px;
-            width: 100%;
-            align-items: stretch; /* Make flex items (buttons) stretch to fill the container width */
-        }
-
-        .btn-save {
-            background-color: #007bff; /* Change as desired */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 24px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%; /* Make button take full width */
-        }
-
-        .btn-cancel {
-            background-color: #dc3545; /* Change as desired */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 24px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            display: block; /* Ensure the link behaves like a block element to take full width */
-            text-align: center; /* Center the text inside the link */
-            width: 100%; /* Make button take full width */
-        }
-
-        .parent-info-group {
-            margin-top: 30px;
-        }
-
-        .default-image {
-            width: 100px;
-            height: 100px;
-            color: #cccccc;
-            font-size: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <!-- EMBEDDED STYLES HAVE BEEN REMOVED AND MOVED TO CreateStudent.css or custom_styles.css -->
 </head>
 <body>
-    <div class="main-container">
-        <h1 class="page-title">Add Student</h1>
+    <div class="container mt-4">
+        <h1 class="page-title">Add New Student</h1>
 
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             @Html.AntiForgeryToken()
 
-            <div class="form-container">
-                <div class="form-section">
-                    <h2 class="section-title">Student Information</h2>
+            <div class="form-container card shadow-sm p-4">
+                <div class="row g-4">
+                    <!-- Left Column - Student Information -->
+                    <div class="col-md-6 form-section">
+                        <h2 class="form-section-title">Student Information</h2>
 
-                    <div class="form-group">
-                        <label for="studentName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="studentName" name="FullName" value="@Model.FullName" required />
-                    </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="FullName" class="form-label">Full Name</label>
+                            <input asp-for="FullName" class="form-control" required />
+                            <div class="invalid-feedback">Please enter the student's full name.</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="EmailAddress" value="@Model.EmailAddress" required />
-                    </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="EmailAddress" class="form-label">Email Address</label>
+                            <input asp-for="EmailAddress" type="email" class="form-control" required />
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" name="PhoneNo" value="@Model.PhoneNo" required />
-                    </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="PhoneNo" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNo" type="tel" class="form-control" required />
+                            <div class="invalid-feedback">Please enter a phone number.</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="Address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" required />
-                    </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <input asp-for="Address" class="form-control" required />
+                            <div class="invalid-feedback">Please enter an address.</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="grade" class="form-label">Grade</label>
-                        <input type="text" class="form-control" id="Grade" name="Grade" value="@Model.Grade" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dob" class="form-label">Date of Birth</label>
-                        <input type="date" class="form-control" id="dob" name="DateOfBirth" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Gender</label>
-                        <div class="gender-options">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="Gender" id="male" value="Male" @(Model.Gender == "Male" ? "checked" : "") required />
-                                <label class="form-check-label" for="male">Male</label>
+                        <!-- Parent Information -->
+                        <div class="parent-info mt-4">
+                            <h3 class="form-section-title">Parent Information</h3>
+                            <div class="form-group mb-3">
+                                <label asp-for="ParentName" class="form-label">Parent Name</label>
+                                <input asp-for="ParentName" class="form-control" required />
+                                <div class="invalid-feedback">Please enter the parent's name.</div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="Gender" id="female" value="Female" @(Model.Gender == "Female" ? "checked" : "") required />
-                                <label class="form-check-label" for="female">Female</label>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="ParentEmail" class="form-label">Parent Email</label>
+                                <input asp-for="ParentEmail" type="email" class="form-control" required />
+                                <div class="invalid-feedback">Please enter a valid parent email.</div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="ParentPhone" class="form-label">Parent Phone</label>
+                                <input asp-for="ParentPhone" type="tel" class="form-control" required />
+                                <div class="invalid-feedback">Please enter the parent's phone number.</div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-section">
-                    <h2 class="section-title">Student Photo</h2>
-                    <div class="student-photo">
-                        <div class="photo-container" id="photoContainer">
-                            <div class="default-image" id="defaultIcon">
-                                <i class="fas fa-user"></i>
+                    <!-- Right Column - Additional Information -->
+                    <div class="col-md-6 form-section">
+                        <h2 class="form-section-title">Additional Information</h2>
+                        <!-- Student Photo -->
+                        <div class="student-photo text-center mb-3">
+                            <div class="photo-container mb-2">
+                                <img id="photoPreview" src="~/images/profile-picture.png" alt="Student Photo Preview" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                             </div>
-                            <img id="photoPreview" style="display: none;" alt="Student Photo">
+                            <input type="file" id="studentImage" name="StudentImageFile" accept="image/*" class="form-control d-none" />
+                            <button type="button" class="btn btn-secondary btn-sm" id="uploadBtn"><i class="fas fa-upload"></i> Upload Photo</button>
                         </div>
-                        <input type="file" id="studentImage" name="StudentImage" accept="image/*" style="display: none;" />
-                        <button type="button" class="upload-btn" id="uploadBtn">Upload Photo</button>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Grade" class="form-label">Grade</label>
+                            <input asp-for="Grade" class="form-control" required />
+                            <div class="invalid-feedback">Please enter the student's grade.</div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")"/>
+                            <div class="invalid-feedback">Please enter the date of birth.</div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Gender</label>
+                            <div class="gender-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" asp-for="Gender" id="male" value="Male"/>
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" asp-for="Gender" id="female" value="Female"/>
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="parent-info-group">
-                        <h2 class="section-title">Parent Information</h2>
-                        <div class="form-group">
-                            <label for="parentName" class="form-label">Parent Name</label>
-                            <input type="text" class="form-control" id="parentName" name="ParentName" value="@Model.ParentName" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parentEmail" class="form-label">Parent Email</label>
-                            <input type="email" class="form-control" id="parentEmail" name="ParentEmail" value="@Model.ParentEmail" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parentPhone" class="form-label">Parent Phone</label>
-                            <input type="tel" class="form-control" id="parentPhone" name="ParentPhone" value="@Model.ParentPhone" required />
-                        </div>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button type="submit" class="btn-save">Save Changes</button>
-                    <a asp-action="Index" class="btn-cancel">Cancel</a>
                 </div>
             </div>
 
-           
+            <div class="action-buttons mt-4 text-center">
+                <button type="submit" class="btn btn-primary btn-lg me-2"><i class="fas fa-save"></i> Create Student</button>
+                <a asp-action="Index" asp-controller="Student" class="btn btn-secondary btn-lg"><i class="fas fa-times-circle"></i> Cancel</a>
+            </div>
         </form>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
         $(document).ready(function() {
-            // Handle upload button click
             $('#uploadBtn').click(function() {
                 $('#studentImage').click();
             });
 
-            // Preview selected image
             $('#studentImage').change(function() {
                 if (this.files && this.files[0]) {
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         $('#photoPreview').attr('src', e.target.result);
-                        $('#defaultIcon').hide();
-                        $('#photoPreview').show();
                     }
                     reader.readAsDataURL(this.files[0]);
                 }
@@ -296,3 +164,4 @@
     </script>
 </body>
 </html>
+
