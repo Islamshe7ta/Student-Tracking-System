@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.BLL.Repositories;
 using StudentTrackingSystem.DAL.Models;
 using Microsoft.AspNetCore.Identity;
-using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.Pl.Services;
-
 
 namespace StudentTrackingSystem
 {
@@ -26,24 +24,24 @@ namespace StudentTrackingSystem
             builder.Services.AddScoped<IParentRepository, ParentRepository>();
             builder.Services.AddScoped<IGradeRepository, GradeRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<EmailService>();
+
+            // Add Generic Repository for Attendance
+            builder.Services.AddScoped<IGenaricRepository<Attendance>, GenaricRepository<Attendance>>();
 
             // Ensure the 'UseSqlServer' method is available by adding the correct using directive
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-                    builder.Services.AddIdentity<AppUser, IdentityRole>()
-                    .AddEntityFrameworkStores<AppDbContext>()
-                    .AddDefaultTokenProviders();
-
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Account/SignIn"; // ← هنا بتقوله فين صفحة تسجيل الدخول
-                options.AccessDeniedPath = "/Account/AccessDenied"; // ← اختياري، لو عامل صفحة رفض صلاحية
+                options.LoginPath = "/Account/SignIn";
+                options.AccessDeniedPath = "/Account/AccessDenied";
             });
-
-
-            builder.Services.AddScoped<EmailService>();
 
             //builder.Services.AddAutoMapper(typeof(StudentMapper));
 
@@ -55,7 +53,6 @@ namespace StudentTrackingSystem
                 dbContext.Database.Migrate();
                 dbContext.DataSeed();
             }
-
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -69,14 +66,13 @@ namespace StudentTrackingSystem
 
             app.UseRouting();
             app.UseAuthentication();
-
             app.UseAuthorization();
 
-                app.MapControllerRoute(
-         name: "default",
-         pattern: "{controller=Account}/{action=SignIn}/{id?}");
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Account}/{action=SignIn}/{id?}");
+
             app.Run();
         }
     }
-
 }

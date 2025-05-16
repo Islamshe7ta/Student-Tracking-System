@@ -27,6 +27,10 @@ namespace StudentTrackingSystem.Controllers
                 .Include(s => s.Grade)
                 .ToListAsync();
 
+            // Get grades for the filter dropdown
+            var grades = await _unitOfWork.GradeRepository.GetAllAsync();
+            ViewBag.Grades = grades.ToList();
+
             return View(subjects);
         }
 

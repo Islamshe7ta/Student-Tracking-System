@@ -27,7 +27,8 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
         public DbSet<Subject> Subjects { get; set; } // ✅ ضيف ده
         public DbSet<Teatcher> Teatchers { get; set; } // لو بتستخدمه
         public DbSet<Student> Students { get; set; } // لو بتستخدمه
-        
+        public DbSet<Attendance> Attendances { get; set; }
+      
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

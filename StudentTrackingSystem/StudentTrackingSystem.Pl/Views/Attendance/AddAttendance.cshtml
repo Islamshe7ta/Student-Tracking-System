@@ -1,0 +1,90 @@
+@model List<StudentTrackingSystem.Pl.DTOs.AttendanceDTO>
+@using StudentTrackingSystem.DAL.Models
+
+@{
+    ViewData["Title"] = "Add Attendance";
+}
+
+<div class="container mt-4">
+    <h2>Add Attendance</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form method="get" class="form-inline">
+                <div class="form-group">
+                    <label class="mr-2">Filter by Grade:</label>
+                    <select name="grade" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Grades</option>
+                        @foreach (Grade grade in ViewBag.Grades)
+                        {
+                            if (Context.Request.Query["grade"] == grade.Name)
+                            {
+                                <option value="@grade.Name" selected>@grade.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@grade.Name">@grade.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.StudentName</td>
+                        <td>@student.Grade</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="markAttendance(@student.StudentId, true)">
+                                Present
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="markAttendance(@student.StudentId, false)">
+                                Absent
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markAttendance(studentId, isPresent) {
+            $.ajax({
+                url: '@Url.Action("MarkAttendance")',
+                type: 'POST',
+                data: { studentId: studentId, isPresent: isPresent },
+                success: function (result) {
+                    if (result.success) {
+                        // Get the current grade filter value
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const grade = urlParams.get('grade') || '';
+                        
+                        // Redirect to ShowAttendance with the same grade filter and scroll to the new record
+                        window.location.href = '@Url.Action("ShowAttendance")' + 
+                            (grade ? '?grade=' + grade : '') + 
+                            (grade ? '&' : '?') + 'highlight=' + result.attendanceId;
+                    }
+                },
+                error: function () {
+                    alert('Error marking attendance!');
+                }
+            });
+        }
+    </script>
+} 

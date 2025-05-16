@@ -28,10 +28,14 @@ namespace StudentTrackingSystem.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Corrected the usage of DbContext.Set<TEntity>() to properly call the method
+            // Get grades for the filter dropdown
+            var grades = await _unitOfWork.GradeRepository.GetAllAsync();
+            ViewBag.Grades = grades.ToList();
+
+            // Get students with related data
             var students = await _Context.Set<Student>()
-                .Include(s => s.Parent) // Fetch related Parent data
-                .ToListAsync(); // Ensure the query is executed and data is retrieved
+                .Include(s => s.Parent)
+                .ToListAsync();
 
             var studentDTOs = students.Select(student => new StudentDTO
             {
@@ -291,40 +295,57 @@ namespace StudentTrackingSystem.PL.Controllers
             // If we get here, something went wrong with saving
             return View(studentDTO);
         }
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id is null) return BadRequest();
+        //[HttpGet]
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id is null) return BadRequest();
 
-            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
-            if (student is null) return NotFound();
+        //    var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
+        //    if (student is null) return NotFound();
 
-            // تحويل الـ Student إلى StudentDTO
-            var studentDTO = new StudentDTO
-            {
-                StudentId = student.Id,
-                FullName = student.FullName,
-                Address = student.Address,
-                EmailAddress = student.EmailAddress,
-                PhoneNo = student.PhoneNo,
-                DateOfBirth = student.DateOfBirth,
-                Grade = student.Grade,
-                Gender = student.Gender,
-                ImagePath = student.ImagePath,
-                ParentName = student.Parent?.FullName,
-                ParentEmail = student.Parent?.EmailAddress,
-                ParentPhone = student.Parent?.PhoneNo
-            };
+        //    // تحويل الـ Student إلى StudentDTO
+        //    var studentDTO = new StudentDTO
+        //    {
+        //        StudentId = student.Id,
+        //        FullName = student.FullName,
+        //        Address = student.Address,
+        //        EmailAddress = student.EmailAddress,
+        //        PhoneNo = student.PhoneNo,
+        //        DateOfBirth = student.DateOfBirth,
+        //        Grade = student.Grade,
+        //        Gender = student.Gender,
+        //        ImagePath = student.ImagePath,
+        //        ParentName = student.Parent?.FullName,
+        //        ParentEmail = student.Parent?.EmailAddress,
+        //        ParentPhone = student.Parent?.PhoneNo
+        //    };
 
-            return View(studentDTO);
-        }
+        //    return View(studentDTO);
+        //}
 
-        [HttpPost, ActionName("Delete")]
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var student = await _unitOfWork.StudentRepository.GetAsync(id);
+        //    if (student is null) return NotFound();
+
+        //    // حذف الطالب من الـ Repository
+        //    _unitOfWork.StudentRepository.Delete(student);
+        //    await _unitOfWork.CompleteAsync();
+
+        //    TempData["Message"] = "Student Deleted Successfully";
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _unitOfWork.StudentRepository.GetAsync(id);
-            if (student is null) return NotFound();
+            if (student is null)
+                return NotFound();
 
             _unitOfWork.StudentRepository.Delete(student);
             await _unitOfWork.CompleteAsync();
@@ -332,7 +353,6 @@ namespace StudentTrackingSystem.PL.Controllers
             TempData["Message"] = "Student Deleted Successfully";
             return RedirectToAction(nameof(Index));
         }
-
 
     }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentTrackingSystem.DAL.Data.Contexts;
 
@@ -11,9 +12,11 @@ using StudentTrackingSystem.DAL.Data.Contexts;
 namespace StudentTrackingSystem.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250516011748_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,30 +290,6 @@ namespace StudentTrackingSystem.DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Attendance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsPresent")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Attendances");
-                });
-
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Grade", b =>
                 {
                     b.Property<int>("Id")
@@ -482,17 +461,6 @@ namespace StudentTrackingSystem.DAL.Migrations
                     b.Navigation("Parent");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Attendance", b =>
-                {
-                    b.HasOne("Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("StudentTrackingSystem.DAL.Models.Subject", b =>
