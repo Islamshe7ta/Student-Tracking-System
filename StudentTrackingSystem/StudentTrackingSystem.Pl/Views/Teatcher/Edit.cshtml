@@ -1,92 +1,148 @@
-﻿@model StudentTrackingSystem.PL.DTOs.TeatcherDTO
+@model StudentTrackingSystem.PL.DTOs.TeatcherDTO // Or the correct DTO for Teacher
 
 @{
     ViewData["Title"] = "Edit Teacher";
 }
 
-<style>
-    .custom-card-background {
-        background-color: rgb(193, 229, 231); /* نفس اللون المستخدم في صفحة Create */
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Student Tracking System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/custom_styles.css" /> <!-- Ensure this path is correct -->
+    <link rel="stylesheet" href="~/css/EditStudent.css" /> <!-- Specific styles for Edit Teacher page -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container mt-4" style="width:94%">
+        <h1 class="page-title">Edit Teacher</h1>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="needs-validation teacher-form-container card shadow-sm p-4" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ImagePath" /> <!-- Assuming TeatcherDTO has ImagePath for existing image -->
 
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="p-4 rounded shadow-lg custom-card-background">
-                <form asp-action="Edit" enctype="multipart/form-data">
-                    <input type="hidden" asp-for="Id" />
+            <div class="row g-4">
+                <!-- Left Column - Teacher Information -->
+                <div class="col-md-6 form-section">
+                    <h2 class="form-section-title">Teacher Information</h2>
 
-                    <div class="row">
-                        <!-- Column 1 -->
-                        <div class="col-md-6">
-                            <h4 class="text-center mb-4"> Teacher Information</h4>
+                    <div class="form-group mb-3">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <input asp-for="FullName" class="form-control" required />
+                        <div class="invalid-feedback">Please enter the teacher Ls full name.</div>
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="FullName"></label>
-                                <input asp-for="FullName" class="form-control" />
-                                <span asp-validation-for="FullName" class="text-danger"></span>
-                            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" type="email" class="form-control" required />
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Email"></label>
-                                <input asp-for="Email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" type="tel" class="form-control" required />
+                        <div class="invalid-feedback">Please enter a phone number.</div>
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="PhoneNumber"></label>
-                                <input asp-for="PhoneNumber" class="form-control" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="SubjectId" class="form-label">Subject</label>
+                        <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Subjects" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a subject.</div>
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Gender"></label>
-                                <select asp-for="Gender" class="form-control" asp-items="ViewBag.Genders">
-                                    <option value="">Select Gender</option>
-                                </select>
-                                <span asp-validation-for="Gender" class="text-danger"></span>
-                            </div>
+                   
+                </div>
+
+                <!-- Right Column - Additional Information -->
+                <div class="col-md-6 form-section">
+                    <h2 class="form-section-title">Additional Information</h2>
+                    <!-- Teacher Photo -->
+                    <div class="teacher-photo text-center mb-3">
+                        <div class="teacher-image-container mb-2">
+                            <img id="photoPreview" src="@(!string.IsNullOrEmpty(Model.ImagePath) ? Url.Content(Model.ImagePath) : Url.Content("~/images/default-teacher.png"))" alt="Teacher Photo Preview" class="img-fluid teacher-image-preview" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
                         </div>
+                        <input asp-for="TeacherImage" type="file" id="teacherImageFile" name="TeacherImage" accept="image/*" class="form-control d-none" />
+                        <button type="button" class="btn btn-secondary btn-sm" id="uploadBtn"><i class="fas fa-upload"></i> Change Photo</button>
+                        <span asp-validation-for="TeacherImage" class="text-danger"></span>
+                    </div>
 
-                        <!-- Column 2 -->
-                        <div class="col-md-6">
-                            <h4 class="text-center mb-4"> Teacher Photo</h4>
+                    <div class="form-group mb-3">
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")"/>
+                        <div class="invalid-feedback">Please enter the date of birth.</div>
+                    </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="TeacherImage">Teacher Image</label>
-                                <input asp-for="TeacherImage" type="file" class="form-control" />
-                                <span asp-validation-for="TeacherImage" class="text-danger"></span>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Gender</label>
+                        <div class="gender-options">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" asp-for="Gender" id="maleEdit" value="Male" required/>
+                                <label class="form-check-label" for="maleEdit">Male</label>
                             </div>
-
-                            <div class="form-group mb-3">
-                                <label asp-for="DateOfBirth"></label>
-                                <input asp-for="DateOfBirth" type="date" class="form-control" />
-                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label asp-for="SubjectId"></label>
-                                <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Subjects">
-                                    <option value="">Select Subject</option>
-                                </select>
-                                <span asp-validation-for="SubjectId" class="text-danger"></span>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" asp-for="Gender" id="femaleEdit" value="Female" required/>
+                                <label class="form-check-label" for="femaleEdit">Female</label>
                             </div>
                         </div>
                     </div>
 
-                    <div class="text-center mt-4" style="width: 100%;">
-                        <button type="submit" style="width: 100%;" class="btn btn-primary px-5">Update</button>
-                        <a asp-action="Index" class="btn btn-secondary mt-2" style="width: 100%;">Cancel</a>
-                    </div>
-                </form>
+                  
+                </div>
             </div>
-        </div>
+            
+              <div class="action-buttons mt-4 text-center">
+                <button type="submit" class="btn btn-primary btn-lg me-2"><i class="fas fa-save"></i> Save Changes</button>
+                <a asp-action="Index" asp-controller="Teatcher" class="btn btn-secondary btn-lg"><i class="fas fa-times-circle"></i> Cancel</a>
+            </div>
+        </form>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Bootstrap form validation
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        // Image preview script
+        $(document).ready(function() {
+            $('#uploadBtn').click(function() {
+                $('#teacherImageFile').click(); // Ensure this ID matches the file input
+            });
+
+            $('#teacherImageFile').change(function() {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#photoPreview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+    </script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>
+

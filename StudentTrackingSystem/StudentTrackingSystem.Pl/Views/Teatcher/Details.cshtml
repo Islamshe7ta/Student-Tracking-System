@@ -1,4 +1,4 @@
-﻿@model StudentTrackingSystem.DAL.Models.Teatcher
+@model StudentTrackingSystem.DAL.Models.Teatcher // Or TeatcherDTO if that's the standard for this view
 
 @{
     ViewData["Title"] = "Teacher Details";
@@ -9,103 +9,101 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <title>@ViewData["Title"] - Student Tracking System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/ShowStudents.css" />
-    <link rel="stylesheet" href="~/StudentTrackingSystem.Pl.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom_styles.css" /> <!-- Global custom styles -->
+    <link rel="stylesheet" href="~/css/ShowStudents.css" /> <!-- Specific styles for Details Teacher page -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <style>
-        .teacher-details-card {
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            background-color: rgb(193, 229, 231);
-        }
-
-        .teacher-image {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 5px solid #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .detail-value {
-            font-weight: 400;
-        }
-
-        .section-divider {
-            height: 1px;
-            background-color: #e0e0e0;
-            margin: 20px 0;
-        }
-
-        .teacher-header,
-        .teacher-body {
-            background-color: rgb(193, 229, 231);
-            padding: 20px;
-        }
-
-        .teacher-body {
-            text-align: center;
+        .teacher-details-card .card-header {
+            background-color: var(--primary-color) !important;
         }
     </style>
 </head>
+
 <body>
-    <div class="container mt-4 mb-5">
-        <h2 class="section-title text-center mb-4">Teacher Details</h2>
+    <div class="container mt-4">
+        <h1 class="page-title">Teacher Details</h1>
 
-        <div class="teacher-details-card">
-            <div class="teacher-header text-center">
-                @if (!string.IsNullOrEmpty(Model.ImagePath))
-                {
-                    <img src="@Model.ImagePath" alt="@Model.FullName" class="teacher-image mb-3">
-                }
-                else
-                {
-                    <img src="~/img/default-student.png" alt="Default Student Photo" class="teacher-image mb-3">
-                }
-                <h3 class="mb-1">@Model.FullName</h3>
+        <div class="card shadow-sm teacher-details-card">
+            <div class="card-header bg-primary text-white"> <!-- Adapted from student view, consider a teacher-specific color if needed -->
+                <h4 class="mb-0">Information for: @Model.FullName</h4>
             </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <img src="@Model.ImagePath" alt="@Model.FullName" class="img-fluid rounded-circle teacher-detail-img-large">
+                        }
+                        else
+                        {
+                            <img src="~/images/default-teacher.png" alt="Default Photo" class="img-fluid rounded-circle teacher-detail-img-large">
+                        }
+                    </div>
+                    <div class="col-md-8">
+                        <dl class="row">
+                            <dt class="col-sm-4 detail-label">Full Name:</dt>
+                            <dd class="col-sm-8">@Model.FullName</dd>
 
-            <div class="teacher-body">
-                <div class="row justify-content-center">
-                    <div class="col-md-6 text-center">
-                        <h4 class="mb-3">Personal Information</h4>
+                            <dt class="col-sm-4 detail-label">Email Address:</dt>
+                            <dd class="col-sm-8">@Model.Email</dd>
 
-                        <div class="mb-2">
-                            <span class="detail-label">Email :</span>
-                            <span class="detail-value">@Model.Email</span>
-                        </div>
+                            <dt class="col-sm-4 detail-label">Phone Number:</dt>
+                            <dd class="col-sm-8">@Model.PhoneNumber</dd>
 
-                        <div class="mb-2">
-                            <span class="detail-label">Phone :</span>
-                            <span class="detail-value">@Model.PhoneNumber</span>
-                        </div>
+                            <dt class="col-sm-4 detail-label">Subject:</dt>
+                            <dd class="col-sm-8">@(Model.Subject?.Name ?? "N/A")</dd> <!-- Assuming Subject is a navigation property -->
 
-                        <div class="mb-2">
-                            <span class="detail-label">Gender :</span>
-                            <span class="detail-value">@Model.Gender</span>
-                        </div>
+                            <dt class="col-sm-4 detail-label">Date of Birth:</dt>
+                            <dd class="col-sm-8">@Model.DateOfBirth.ToString("dd MMMM yyyy")</dd>
 
-                        <div class="mb-2">
-                            <span class="detail-label">Date of Birth :</span>
-                            <span class="detail-value">@Model.DateOfBirth.ToShortDateString()</span>
-                        </div>
+                            <dt class="col-sm-4 detail-label">Gender:</dt>
+                            <dd class="col-sm-8">@Model.Gender</dd>
+                            
+                         </dl>
                     </div>
                 </div>
-
-                <div class="section-divider"></div>
-
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
-
+            <div class="card-footer text-center action-buttons-group">
+                <a asp-action="Edit" asp-controller="Teatcher" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                    <i class="fas fa-edit"></i> Edit Teacher
+                </a>
+                <a asp-action="Delete" asp-controller="Teacher" asp-route-id="@Model.Id" class="btn btn-danger me-2">
+                    <i class="fas fa-trash-alt"></i> Delete Teacher
+                </a>
+                <a asp-action="Index" asp-controller="Teatcher" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
         </div>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<style>
+    /* Styles adapted from student Details.cshtml, consider moving to DetailsTeacher.css */
+    .teacher-details-card .card-header {
+        /* background-color: var(--teacher-primary-color); /* Define a primary color for teacher if different */
+        /* For now, using a generic blue, assuming custom_styles.css might define var(--primary-color) */
+        background-color: #007bff; 
+    }
+    .teacher-detail-img-large {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border: 4px solid #add8e6; /* Light blue border, adapt as needed */
+    }
+    .detail-label {
+        font-weight: 600;
+        /* color: var(--teacher-primary-color-dark); /* Define if needed */
+    }
+    dl.row dd {
+        margin-bottom: .5rem;
+    }
+</style>
+

@@ -8,7 +8,7 @@ namespace StudentTrackingSystem.PL.DTOs
 
         [Required(ErrorMessage = " Email Is Required")]
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
     }
 }

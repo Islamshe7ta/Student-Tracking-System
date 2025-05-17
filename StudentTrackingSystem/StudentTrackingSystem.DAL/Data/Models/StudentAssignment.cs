@@ -12,11 +12,11 @@ namespace StudentTrackingSystem.DAL.Data.Models
 
         [ForeignKey("Assignment")]
         public int AssignmentId { get; set; }
-        public Assignment Assignment { get; set; }
+        public Assignment? Assignment { get; set; }
 
         [ForeignKey("Student")]
-        public string StudentId { get; set; }
-        public AppUser Student { get; set; }
+        public string? StudentId { get; set; }
+        public AppUser? Student { get; set; }
 
         public string? SubmittedFileUrl { get; set; }
 

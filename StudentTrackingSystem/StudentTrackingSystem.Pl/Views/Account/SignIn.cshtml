@@ -2,148 +2,114 @@
 @model SignInDTO
 @{
     ViewData["Title"] = "SignIn";
-    // Layout = "~/Views/Shared/_AuthLayout.cshtml";
     Layout = null;
 }
 
-<div class="main-agileinfo">
-    <div class="agileits-top">
-        <form asp-action="SignIn" method="post">
-            <input class="text email" asp-for="Email" placeholder="Email" required="">
-            <input class="text" asp-for="Password" placeholder="Password" required="">
-            <div class="wthree-text">
-                <label class="anim">
-                    <input asp-for="RememberMy" class="checkbox">
-                    <span>RememberMy</span>
-                </label>
-                <div class="clear"> </div>
-            </div>
-            <input type="submit" value="SIGNIN">
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign In | Student Tracking System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/auth-styles.css" />
+    <style>
+        /* Base styles for all devices */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
 
-        @* Sign In With Google *@
-        <br />
-        <a asp-action="Googellogin"
-           style="display: block; margin: 10px auto; text-align: center; background-color: #4285F4; color: white; width: 70%; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold;">
-            <img src="https://img.icons8.com/color/24/000000/google-logo.png" style="vertical-align: middle; margin-right: 8px;" />
-            Sign in with Google
-        </a>
+        /* Full-screen styling for mobile */
+        @@media (max-width: 768px) {
+            body {
+                display: block;
+                padding: 0;
+            }
 
+            .auth-container {
+                width: 100vw;
+                max-width: 100vw;
+                min-height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 2rem 1rem;
+                margin: 0;
+            }
 
+            .particles {
+                display: none;
+            }
 
-        <p>Don't have an Account? <a asp-action="SignUp"> Create New Account </a></p>
-        <p><a asp-action="ForgetPassword"> Forget Password </a></p>
-    </div>
-</div>
+            .auth-form {
+                padding: 0 0.5rem;
+            }
+        }
 
-<!-- Modal for Validation Errors -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #fff3cd; color: #856404;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div asp-validation-summary="All" class="validation-summary-errors"></div>
-            </div>
+        /* Larger screens */
+        @@media (min-width: 769px) {
+            .auth-container {
+                max-width: 500px;
+                margin: 1rem auto;
+            }
+        }
+
+        /* Prevent horizontal overflow */
+        .form-control, .input-group, .auth-btn {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Background -->
+    <div class="particles" id="particles-js"></div>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>SIGN IN</h1>
+            <p class="text-muted">Welcome back! Please enter your credentials</p>
         </div>
+
+        <form asp-action="SignIn" method="post" class="auth-form">
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input asp-for="Email" class="form-control" placeholder="Email" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" required />
+                    <span class="input-group-text toggle-password" id="togglePassword">
+                        <i class="bi bi-eye-slash"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group form-check">
+                <input asp-for="RememberMy" class="form-check-input" />
+                <label class="form-check-label" asp-for="RememberMy">Remember me</label>
+            </div>
+
+            <button type="submit" class="auth-btn">SIGN IN</button>
+
+            <div class="text-center mt-3">
+                <a asp-action="ForgetPassword" class="auth-link">Forgot password?</a>
+            </div>
+
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a asp-action="SignUp" class="auth-link">Sign up</a></p>
+            </div>
+        </form>
     </div>
-</div>
 
-@section Validation
-{
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
-    <!-- Bootstrap JS (if not already loaded in _Layout) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const validationDiv = document.querySelector('.validation-summary-errors');
-            if (validationDiv && validationDiv.innerHTML.trim() !== "") {
-                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                errorModal.show();
-            }
-        });
-    </script>
-}
-
-<style>
-    body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        font-family: Arial, sans-serif;
-    }
-
-    .main-agileinfo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .agileits-top {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 100%;
-        max-width: 400px;
-        backdrop-filter: blur(10px);
-    }
-
-    .text {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: none;
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        font-size: 16px;
-    }
-
-        .text::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-    .wthree-text {
-        text-align: left;
-        font-size: 14px;
-        margin-bottom: 15px;
-        color: white;
-    }
-
-    input[type="submit"] {
-        background: #ff4081;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-
-        input[type="submit"]:hover {
-            background: #e91e63;
-        }
-
-    p {
-        margin-top: 10px;
-        font-size: 14px;
-        color: white;
-    }
-
-        p a {
-            color: #ff4081;
-            text-decoration: none;
-        }
-
-            p a:hover {
-                text-decoration: underline;
-            }
-</style>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="~/js/auth-scripts.js"></script>
+</body>
+</html>

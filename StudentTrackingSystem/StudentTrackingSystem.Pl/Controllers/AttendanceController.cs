@@ -162,7 +162,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         // الصفحة لاظهار الطلاب اللي هيتم تسجيل حضورهم (فقط الطلاب اللي لم يؤخذ لهم حضور اليوم)
-        public async Task<IActionResult> AddAttendance(string grade = null)
+        public async Task<IActionResult> AddAttendance(string? grade = null)
         {
             var today = DateTime.Today;
 
@@ -218,7 +218,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         // عرض كل الحضور مع فلترة الدرجة
-        public async Task<IActionResult> ShowAttendance(string grade = null)
+        public async Task<IActionResult> ShowAttendance(string? grade = null)
         {
             var attendances = await _attendanceRepo.GetAllAsync();
             var students = await _studentRepo.GetAllAsync();

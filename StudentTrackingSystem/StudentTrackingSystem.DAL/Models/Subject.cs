@@ -5,18 +5,18 @@ namespace StudentTrackingSystem.DAL.Models
 {
     public class Subject
     {
-
         public int Id { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         // Navigation Property to Grade
         public int GradeId { get; set; }
-        public Grade? Grade { get; set; } // لازم يكون فيه علاقة بين المادة والصف
+        public Grade? Grade { get; set; }
 
         // Navigation Property
-        public ICollection<Teatcher>? Teatchers { get; set; }
+        public ICollection<Teatcher> Teatchers { get; set; } = new List<Teatcher>();
     }
+
 }

@@ -24,7 +24,9 @@ namespace StudentTrackingSystem.BLL.Repositories
         public async Task<Grade> GetAsync(int id)
         {
             return await _context.Grades
-                .FirstOrDefaultAsync(g => g.Id == id);
+                .FirstOrDefaultAsync(g => g.Id == id)
+                ?? throw new InvalidOperationException($"Grade with id {id} not found.");
+
         }
 
         public async Task AddAsync(Grade grade)

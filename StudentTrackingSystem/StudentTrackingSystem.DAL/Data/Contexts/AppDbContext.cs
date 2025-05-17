@@ -1,10 +1,9 @@
 ﻿using StudentTrackingSystem.DAL.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using StudentTrackingSystem.DAL.Models;
+using StudentTrackingSystem.DAL.Data.Models;
 using StudentTrackingSystem.Models;
 using Microsoft.AspNetCore.Identity; // تأكد إن ده موجود علشان يلاقي Student
-using StudentTrackingSystem.DAL.Data.Models;
 
 namespace StudentTrackingSystem.DAL.Data.Contexts
 {
@@ -67,6 +66,11 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
                 .WithMany()
                 .HasForeignKey(a => a.TeacherId)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Teatcher>()
+       .HasOne(t => t.Subject)
+       .WithMany(s => s.Teatchers)
+       .HasForeignKey(t => t.SubjectId)
+       .OnDelete(DeleteBehavior.Restrict);
         }
 
         public void DataSeed()

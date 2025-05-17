@@ -82,7 +82,7 @@ namespace StudentTrackingSystem.Pl.Controllers
                 SubjectId = model.SubjectId,
                 DueDate = model.DueDate,
                 TotalMarks = model.TotalMarks,
-                TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty
             };
 
             if (model.AssignmentFile != null)
@@ -113,21 +113,22 @@ namespace StudentTrackingSystem.Pl.Controllers
         {
             var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var assignments = await _context.Assignments
-                .Include(a => a.Grade)
-                .Include(a => a.Subject)
-                .Where(a => a.TeacherId == teacherId)
-                .Select(a => new AssignmentDetailsDTO
-                {
-                    Id = a.Id,
-                    Title = a.Title,
-                    Description = a.Description,
-                    Grade = a.Grade.Name,
-                    Subject = a.Subject.Name,
-                    DueDate = a.DueDate,
-                    TotalMarks = a.TotalMarks,
-                    FileUrl = a.FileUrl,
-                    CreatedAt = a.CreatedAt
-                })
+            .Include(a => a.Grade)
+            .Include(a => a.Subject)
+            .Where(a => a.TeacherId == teacherId)
+            .Select(a => new AssignmentDetailsDTO
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                Grade = a.Grade != null ? a.Grade.Name : string.Empty,
+                Subject = a.Subject != null ? a.Subject.Name : string.Empty,
+                DueDate = a.DueDate,
+                TotalMarks = a.TotalMarks,
+                FileUrl = a.FileUrl,
+                CreatedAt = a.CreatedAt
+            })
+
                 .ToListAsync();
 
             return View(assignments);
@@ -146,13 +147,14 @@ namespace StudentTrackingSystem.Pl.Controllers
                     Id = a.Id,
                     Title = a.Title,
                     Description = a.Description,
-                    Grade = a.Grade.Name,
-                    Subject = a.Subject.Name,
+                    Grade = a.Grade != null ? a.Grade.Name : string.Empty,
+                    Subject = a.Subject != null ? a.Subject.Name : string.Empty,
+
                     DueDate = a.DueDate,
                     TotalMarks = a.TotalMarks,
                     FileUrl = a.FileUrl,
                     CreatedAt = a.CreatedAt,
-                    TeacherName = a.Teacher.UserName,
+                    TeacherName = a.Teacher != null ? a.Teacher.UserName : string.Empty,
                     IsSubmitted = _context.StudentAssignments
                         .Any(sa => sa.AssignmentId == a.Id && sa.StudentId == studentId && sa.IsSubmitted),
                     IsGraded = _context.StudentAssignments
@@ -191,7 +193,7 @@ namespace StudentTrackingSystem.Pl.Controllers
                 submission = new StudentAssignment
                 {
                     AssignmentId = model.AssignmentId,
-                    StudentId = studentId,
+                    StudentId = studentId ?? string.Empty,
                     SubmissionDate = DateTime.Now,
                     IsSubmitted = true
                 };

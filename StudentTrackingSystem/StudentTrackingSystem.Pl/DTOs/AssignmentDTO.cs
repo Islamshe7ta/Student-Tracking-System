@@ -7,10 +7,10 @@ namespace StudentTrackingSystem.Pl.DTOs
     public class CreateAssignmentDTO
     {
         [Required]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [Display(Name = "Grade")]
@@ -32,15 +32,15 @@ namespace StudentTrackingSystem.Pl.DTOs
     public class AssignmentDetailsDTO
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Grade { get; set; }
-        public string Subject { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Grade { get; set; }
+        public string? Subject { get; set; }
         public DateTime DueDate { get; set; }
         public int TotalMarks { get; set; }
         public string? FileUrl { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string TeacherName { get; set; }
+        public string? TeacherName { get; set; }
         public bool IsSubmitted { get; set; }
         public bool IsGraded { get; set; }
         public int? ObtainedMarks { get; set; }
@@ -54,7 +54,7 @@ namespace StudentTrackingSystem.Pl.DTOs
         public int AssignmentId { get; set; }
 
         [Required]
-        public IFormFile SubmissionFile { get; set; }
+        public IFormFile? SubmissionFile { get; set; }
     }
 
     public class GradeAssignmentDTO

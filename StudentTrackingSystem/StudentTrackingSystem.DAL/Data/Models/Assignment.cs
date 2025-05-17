@@ -11,20 +11,20 @@ namespace StudentTrackingSystem.DAL.Data.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [ForeignKey("Grade")]
         public int GradeId { get; set; }
-        public Grade Grade { get; set; }
+        public Grade? Grade { get; set; }
 
         [Required]
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
-        public Subject Subject { get; set; }
+        public Subject? Subject { get; set; }
 
         [Required]
         public DateTime DueDate { get; set; }
@@ -38,7 +38,7 @@ namespace StudentTrackingSystem.DAL.Data.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("Teacher")]
-        public string TeacherId { get; set; }
-        public AppUser Teacher { get; set; }
+        public string? TeacherId { get; set; }
+        public AppUser? Teacher { get; set; }
     }
 } 

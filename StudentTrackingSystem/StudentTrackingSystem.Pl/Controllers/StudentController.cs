@@ -79,7 +79,7 @@ namespace StudentTrackingSystem.PL.Controllers
             if (ModelState.IsValid)
             {
                 // Handle student image
-                string imagePath = null;
+                string? imagePath = null;
                 if (studentImage != null && studentImage.Length > 0)
                 {
                     var fileName = Path.GetFileName(studentImage.FileName);
@@ -96,9 +96,9 @@ namespace StudentTrackingSystem.PL.Controllers
                 // Create a new parent entry (if needed)
                 var parent = new Parent
                 {
-                    FullName = studentDTO.ParentName,
-                    PhoneNo = studentDTO.ParentPhone,
-                    EmailAddress = studentDTO.ParentEmail
+                    FullName = studentDTO.ParentName ?? string.Empty,
+                    PhoneNo = studentDTO.ParentPhone ?? string.Empty,
+                    EmailAddress = studentDTO.ParentEmail ?? string.Empty,
                 };
 
                 await _unitOfWork.ParentRepository.AddAsync(parent);
@@ -107,13 +107,14 @@ namespace StudentTrackingSystem.PL.Controllers
                 // Create the student with the parent info
                 var student = new Student
                 {
-                    FullName = studentDTO.FullName,
+                    FullName = studentDTO.FullName ?? string.Empty,
                     DateOfBirth = studentDTO.DateOfBirth,
-                    EmailAddress = studentDTO.EmailAddress,
-                    PhoneNo = studentDTO.PhoneNo,
+                    EmailAddress = studentDTO.EmailAddress ?? string.Empty,
+                    PhoneNo = studentDTO.PhoneNo ?? string.Empty,
                     Address = studentDTO.Address,
-                    Grade = studentDTO.Grade,
-                    Gender = studentDTO.Gender,
+                    Grade = studentDTO.Grade ?? string.Empty,
+                    Gender = studentDTO.Gender ?? string.Empty,
+
                     //Password = studentDTO.Password,  // Save the password
                     ParentId = parent.Id,  // Set the ParentId for the student
                     ImagePath = imagePath   // Set the student's image path
@@ -175,7 +176,7 @@ namespace StudentTrackingSystem.PL.Controllers
             if (student is null) return NotFound();
 
             // Get the parent information if available
-            Parent parent = null;
+            Parent? parent = null;
             if (student.ParentId.HasValue)
             {
                 parent = await _unitOfWork.ParentRepository.GetAsync(student.ParentId.Value);
@@ -220,7 +221,7 @@ namespace StudentTrackingSystem.PL.Controllers
             // Instead, we'll check specific validation issues that matter
 
             // Keep existing image path if no new image is uploaded
-            string imagePath = studentDTO.ImagePath;
+            string? imagePath = studentDTO.ImagePath;
             if (studentImage != null && studentImage.Length > 0)
             {
                 var fileName = Path.GetFileName(studentImage.FileName);
@@ -241,13 +242,14 @@ namespace StudentTrackingSystem.PL.Controllers
             }
 
             // Update student information
-            student.FullName = studentDTO.FullName;
+            student.FullName = studentDTO.FullName ?? string.Empty;
             student.DateOfBirth = studentDTO.DateOfBirth;
-            student.EmailAddress = studentDTO.EmailAddress;
-            student.PhoneNo = studentDTO.PhoneNo;
+            student.EmailAddress = studentDTO.EmailAddress ?? string.Empty;
+            student.PhoneNo = studentDTO.PhoneNo ?? string.Empty;
             student.Address = studentDTO.Address;
-            student.Grade = studentDTO.Grade;
-            student.Gender = studentDTO.Gender;
+            student.Grade = studentDTO.Grade ?? string.Empty;
+            student.Gender = studentDTO.Gender ?? string.Empty;
+
             student.ImagePath = imagePath; // Use the image path we determined above
 
             // Handle parent information
@@ -261,9 +263,10 @@ namespace StudentTrackingSystem.PL.Controllers
                     if (existingParent != null)
                     {
                         // Update existing parent
-                        existingParent.FullName = studentDTO.ParentName;
-                        existingParent.PhoneNo = studentDTO.ParentPhone;
-                        existingParent.EmailAddress = studentDTO.ParentEmail;
+                        existingParent.FullName = studentDTO.ParentName ?? string.Empty;
+                        existingParent.PhoneNo = studentDTO.ParentPhone ?? string.Empty;
+                        existingParent.EmailAddress = studentDTO.ParentEmail ?? string.Empty;
+
 
                         _unitOfWork.ParentRepository.Update(existingParent);
                     }
@@ -272,9 +275,10 @@ namespace StudentTrackingSystem.PL.Controllers
                         // Create new parent if no parent exists but parent ID was set
                         var newParent = new Parent
                         {
-                            FullName = studentDTO.ParentName,
-                            PhoneNo = studentDTO.ParentPhone,
-                            EmailAddress = studentDTO.ParentEmail
+                            FullName = studentDTO.ParentName ?? string.Empty,
+                            PhoneNo = studentDTO.ParentPhone ?? string.Empty,
+                            EmailAddress = studentDTO.ParentEmail ?? string.Empty,
+
                         };
 
                         await _unitOfWork.ParentRepository.AddAsync(newParent);
@@ -288,9 +292,10 @@ namespace StudentTrackingSystem.PL.Controllers
                     // Create new parent if student has no parent assigned
                     var newParent = new Parent
                     {
-                        FullName = studentDTO.ParentName,
-                        PhoneNo = studentDTO.ParentPhone,
-                        EmailAddress = studentDTO.ParentEmail
+                        FullName = studentDTO.ParentName ?? string.Empty,
+                        PhoneNo = studentDTO.ParentPhone ?? string.Empty,
+                        EmailAddress = studentDTO.ParentEmail ?? string.Empty,
+
                     };
 
                     await _unitOfWork.ParentRepository.AddAsync(newParent);
@@ -312,65 +317,47 @@ namespace StudentTrackingSystem.PL.Controllers
             // If we get here, something went wrong with saving
             return View(studentDTO);
         }
-        //[HttpGet]
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id is null) return BadRequest();
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id is null) return BadRequest();
 
-        //    var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
-        //    if (student is null) return NotFound();
+            var student = await _unitOfWork.StudentRepository.GetAsync(id.Value);
+            if (student is null) return NotFound();
 
-        //    // تحويل الـ Student إلى StudentDTO
-        //    var studentDTO = new StudentDTO
-        //    {
-        //        StudentId = student.Id,
-        //        FullName = student.FullName,
-        //        Address = student.Address,
-        //        EmailAddress = student.EmailAddress,
-        //        PhoneNo = student.PhoneNo,
-        //        DateOfBirth = student.DateOfBirth,
-        //        Grade = student.Grade,
-        //        Gender = student.Gender,
-        //        ImagePath = student.ImagePath,
-        //        ParentName = student.Parent?.FullName,
-        //        ParentEmail = student.Parent?.EmailAddress,
-        //        ParentPhone = student.Parent?.PhoneNo
-        //    };
+            // تحويل الـ Student إلى StudentDTO
+            var studentDTO = new StudentDTO
+            {
+                StudentId = student.Id,
+                FullName = student.FullName,
+                Address = student.Address,
+                EmailAddress = student.EmailAddress,
+                PhoneNo = student.PhoneNo,
+                DateOfBirth = student.DateOfBirth,
+                Grade = student.Grade,
+                Gender = student.Gender,
+                ImagePath = student.ImagePath,
+                ParentName = student.Parent?.FullName,
+                ParentEmail = student.Parent?.EmailAddress,
+                ParentPhone = student.Parent?.PhoneNo
+            };
 
-        //    return View(studentDTO);
-        //}
+            return View(studentDTO);
+        }
 
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var student = await _unitOfWork.StudentRepository.GetAsync(id);
-        //    if (student is null) return NotFound();
-
-        //    // حذف الطالب من الـ Repository
-        //    _unitOfWork.StudentRepository.Delete(student);
-        //    await _unitOfWork.CompleteAsync();
-
-        //    TempData["Message"] = "Student Deleted Successfully";
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _unitOfWork.StudentRepository.GetAsync(id);
-            if (student is null)
-                return NotFound();
+            if (student is null) return NotFound();
 
+            // حذف الطالب من الـ Repository
             _unitOfWork.StudentRepository.Delete(student);
             await _unitOfWork.CompleteAsync();
 
             TempData["Message"] = "Student Deleted Successfully";
             return RedirectToAction(nameof(Index));
         }
-
     }
-
 }

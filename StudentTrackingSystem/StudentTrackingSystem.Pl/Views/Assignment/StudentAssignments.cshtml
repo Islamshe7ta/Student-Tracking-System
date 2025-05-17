@@ -58,7 +58,9 @@
                                         <strong>Grade:</strong>
                                         <span class="@(item.ObtainedMarks >= item.TotalMarks * 0.5 ? "text-success" : "text-danger")">
                                             @item.ObtainedMarks / @item.TotalMarks
-                                            (@Math.Round((double)item.ObtainedMarks / item.TotalMarks * 100, 1)%)
+                                            (@(item.ObtainedMarks.HasValue
+                                               ? Math.Round((double)item.ObtainedMarks.Value / item.TotalMarks * 100, 1)
+                                               : 0)%)
                                         </span>
                                     </div>
                                 }

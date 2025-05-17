@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentTrackingSystem.BLL.Interfaces;
@@ -60,13 +60,14 @@ namespace StudentTrackingSystem.PL.Controllers
 
             var teacher = new Teatcher
             {
-                FullName = dto.FullName,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
+                FullName = dto.FullName ?? string.Empty,
+                Email = dto.Email ?? string.Empty,
+                PhoneNumber = dto.PhoneNumber ?? string.Empty,
                 SubjectId = dto.SubjectId,
                 DateOfBirth = dto.DateOfBirth,
-                Gender = dto.Gender,
+                Gender = dto.Gender ?? string.Empty,
                 ImagePath = imagePath
+
             };
 
             await _unitOfWork.TeatcherRepository.AddAsync(teacher);
@@ -110,12 +111,13 @@ namespace StudentTrackingSystem.PL.Controllers
             var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
             if (teacher == null) return NotFound();
 
-            teacher.FullName = dto.FullName;
-            teacher.Email = dto.Email;
-            teacher.PhoneNumber = dto.PhoneNumber;
+            teacher.FullName = dto.FullName ?? string.Empty;
+            teacher.Email = dto.Email ?? string.Empty;
+            teacher.PhoneNumber = dto.PhoneNumber ?? string.Empty;
             teacher.SubjectId = dto.SubjectId;
             teacher.DateOfBirth = dto.DateOfBirth;
-            teacher.Gender = dto.Gender;
+            teacher.Gender = dto.Gender ?? string.Empty;
+
 
             if (dto.TeacherImage != null)
             {
@@ -147,20 +149,44 @@ namespace StudentTrackingSystem.PL.Controllers
 
             return View(teacher);
         }
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id is null) return BadRequest();
 
-        [HttpPost]
+            var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id.Value);
+            if (teacher is null) return NotFound();
+
+            // تحويل الـ Teatcher إلى TeatcherDTO
+            var teacherDTO = new TeatcherDTO
+            {
+                Id = teacher.Id,
+                FullName = teacher.FullName,
+                Email = teacher.Email,
+                PhoneNumber = teacher.PhoneNumber,
+                SubjectId = teacher.SubjectId,
+                DateOfBirth = teacher.DateOfBirth,
+                Gender = teacher.Gender,
+                ImagePath = teacher.ImagePath
+            };
+
+            return View("Delete", teacherDTO);
+        }
+
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _unitOfWork.TeatcherRepository.GetAsync(id);
-            if (teacher == null)
-                return NotFound();
+            if (teacher is null) return NotFound();
 
             _unitOfWork.TeatcherRepository.Delete(teacher);
             await _unitOfWork.CompleteAsync();
 
+            TempData["Message"] = "Teacher Deleted Successfully";
             return RedirectToAction(nameof(Index));
         }
+
 
         private async Task LoadDropDowns(int? selectedSubjectId = null, string? selectedGender = null)
         {

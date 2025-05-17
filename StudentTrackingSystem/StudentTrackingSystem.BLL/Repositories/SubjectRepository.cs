@@ -17,12 +17,13 @@ public class SubjectRepository : ISubjectRepository
         return await _context.Subjects.ToListAsync();
     }
 
-    public async Task<Subject> GetAsync(int id)
+    public async Task<Subject?> GetAsync(int id)
     {
         return await _context.Subjects
             .Include(s => s.Teatchers)
-            .FirstOrDefaultAsync(s => s.Id == id);
-    }
+            .FirstOrDefaultAsync(s => s.Id == id)
+            ?? throw new InvalidOperationException($"Subject with id {id} not found.");
+   }
 
     public async Task AddAsync(Subject subject)
     {

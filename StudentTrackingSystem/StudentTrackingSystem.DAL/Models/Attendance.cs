@@ -8,9 +8,9 @@ namespace StudentTrackingSystem.DAL.Models
     {
         [ForeignKey("Student")]
         public int StudentId { get; set; }
-        public virtual Student Student { get; set; }
-        
+        public virtual Student? Student { get; set; }
+
         public DateTime Date { get; set; }
         public bool IsPresent { get; set; }
     }
-} 
+}

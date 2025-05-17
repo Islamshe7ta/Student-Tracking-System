@@ -1,33 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentTrackingSystem.DAL.Models
 {
-    
-        public class Parent : BaseEntity
-        {
-            public int Id { get; set; }
+    public class Parent : BaseEntity
+    {
+        // Removed duplicate Id property
 
-            [Required]
-            [MaxLength(35)]
-            public string FullName { get; set; }
+        [Required]
+        [MaxLength(35)]
+        public string FullName { get; set; } = string.Empty;
 
-            [Required]
-            [EmailAddress]
-            public string EmailAddress { get; set; }
+        [Required]
+        [EmailAddress]
+        public string EmailAddress { get; set; } = string.Empty;
 
-            [Required]
-            [RegularExpression(@"^(010|011|012|015)\d{8}$", ErrorMessage = "Invalid phone number.")]
-            public string PhoneNo { get; set; }
-       
-            // علاقة مع الطالب
-            public ICollection<Student> Students { get; set; }
-        }
+        [Required]
+        [RegularExpression(@"^(010|011|012|015)\d{8}$", ErrorMessage = "Invalid phone number.")]
+        public string PhoneNo { get; set; } = string.Empty;
 
+        // علاقة مع الطالب
+        public ICollection<Student> Students { get; set; } = new List<Student>();
     }
-
-
+}

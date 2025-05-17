@@ -6,14 +6,14 @@ namespace StudentTrackingSystem.PL.DTOs
     {
         [Required(ErrorMessage = "Password Is Required")]
         [DataType(DataType.Password)]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
 
 
 
         [Required(ErrorMessage = "Password Is Required")]
         [DataType(DataType.Password)]
         [Compare(nameof(NewPassword), ErrorMessage = "Confirm Password dose'nt match the password !!")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
     }
 }

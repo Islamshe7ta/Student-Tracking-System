@@ -5,22 +5,22 @@ namespace StudentTrackingSystem.PL.DTOs
     public class SignUpDTOs
     {
         [Required(ErrorMessage = " User Name Is Required")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
         [Required(ErrorMessage = " First Name Is Required")]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [Required(ErrorMessage = " Last Name Is Required")]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Password Is Required")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [Required(ErrorMessage = "Password Is Required")]
         [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "Confirm Password dose'nt match the password !!")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
 
         // [Required(ErrorMessage = "Password is required")]
@@ -38,7 +38,7 @@ namespace StudentTrackingSystem.PL.DTOs
 
         [Required(ErrorMessage = " Email Is Required")]
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public  bool IsAgree { get; set; }  
 
     }
