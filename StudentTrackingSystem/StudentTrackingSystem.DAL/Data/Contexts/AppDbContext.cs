@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentTrackingSystem.DAL.Models;
 using StudentTrackingSystem.Models;
 using Microsoft.AspNetCore.Identity; // تأكد إن ده موجود علشان يلاقي Student
+using StudentTrackingSystem.DAL.Data.Models;
 
 namespace StudentTrackingSystem.DAL.Data.Contexts
 {
@@ -28,6 +29,8 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
         public DbSet<Teatcher> Teatchers { get; set; } // لو بتستخدمه
         public DbSet<Student> Students { get; set; } // لو بتستخدمه
         public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<StudentAssignment> StudentAssignments { get; set; }
       
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -46,7 +49,24 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
                 .HasForeignKey(s => s.GradeId)
                 .OnDelete(DeleteBehavior.Cascade);  // يحدد الحذف التلقائي
 
+            // Configure Assignment relationships
+            modelBuilder.Entity<Assignment>()
+                .HasOne(a => a.Grade)
+                .WithMany()
+                .HasForeignKey(a => a.GradeId)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Assignment>()
+                .HasOne(a => a.Subject)
+                .WithMany()
+                .HasForeignKey(a => a.SubjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Assignment>()
+                .HasOne(a => a.Teacher)
+                .WithMany()
+                .HasForeignKey(a => a.TeacherId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public void DataSeed()

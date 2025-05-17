@@ -1,0 +1,85 @@
+@model StudentTrackingSystem.Pl.DTOs.CreateAssignmentDTO
+
+@{
+    ViewData["Title"] = "Create Assignment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Create New Assignment</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">Title</label>
+                            <input asp-for="Title" class="form-control" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="GradeId" class="form-label">Grade</label>
+                                    <select asp-for="GradeId" asp-items="ViewBag.Grades" class="form-select" required>
+                                        <option value="">Select Grade</option>
+                                    </select>
+                                    <span asp-validation-for="GradeId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="SubjectId" class="form-label">Subject</label>
+                                    <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-select" required>
+                                        <option value="">Select Subject</option>
+                                    </select>
+                                    <span asp-validation-for="SubjectId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DueDate" class="form-label">Due Date</label>
+                                    <input asp-for="DueDate" type="datetime-local" class="form-control" required />
+                                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="TotalMarks" class="form-label">Total Marks</label>
+                                    <input asp-for="TotalMarks" type="number" class="form-control" required min="1" />
+                                    <span asp-validation-for="TotalMarks" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="AssignmentFile" class="form-label">Assignment File (Optional)</label>
+                            <input asp-for="AssignmentFile" type="file" class="form-control" />
+                            <span asp-validation-for="AssignmentFile" class="text-danger"></span>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Create Assignment</button>
+                            <a asp-action="TeacherAssignments" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
