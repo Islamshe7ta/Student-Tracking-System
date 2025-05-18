@@ -60,6 +60,21 @@
                                     <li><a class="dropdown-item" asp-controller="Assignment" asp-action="StudentAssignments">📚 Student Assignments</a></li>
                                 </ul>
                             </li>
+                           
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="quizDropdown" role="button" data-bs-toggle="dropdown">
+                                    📝 Quizzes
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><h6 class="dropdown-header">Teacher View</h6></li>
+                                    <li><a class="dropdown-item" asp-controller="Quiz" asp-action="Create">📝 Create Quiz</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Quiz" asp-action="Index">📋 All Quizzes</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Student View</h6></li>
+                                    <li><a class="dropdown-item" asp-controller="Quiz" asp-action="StudentQuizzes">📚 Available Quizzes</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Quiz" asp-action="StudentResults">📊 My Results</a></li>
+                                </ul>
+                            </li>
                         }
                         @if (User.IsInRole("Teachr"))
                         {
@@ -69,12 +84,14 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Assignment" asp-action="TeacherAssignments">📋 My Assignments</a>
                             </li>
+                           
                         }
                         @if (User.IsInRole("Studnt"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Assignment" asp-action="StudentAssignments">📚 My Assignments</a>
                             </li>
+                          
                         }
                     </ul>
 

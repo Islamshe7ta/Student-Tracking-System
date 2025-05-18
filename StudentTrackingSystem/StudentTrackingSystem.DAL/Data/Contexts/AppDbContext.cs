@@ -30,7 +30,12 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<StudentAssignment> StudentAssignments { get; set; }
-      
+        
+        // Quiz-related DbSets
+        public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<QuizQuestion> QuizQuestions { get; set; }
+        public DbSet<StudentQuizSubmission> StudentQuizSubmissions { get; set; }
+        public DbSet<StudentQuizAnswer> StudentQuizAnswers { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -71,6 +76,55 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
        .WithMany(s => s.Teatchers)
        .HasForeignKey(t => t.SubjectId)
        .OnDelete(DeleteBehavior.Restrict);
+
+            // Quiz-related configurations
+            modelBuilder.Entity<Quiz>()
+                .HasOne(q => q.Grade)
+                .WithMany()
+                .HasForeignKey(q => q.GradeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Quiz>()
+                .HasOne(q => q.Subject)
+                .WithMany()
+                .HasForeignKey(q => q.SubjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Quiz>()
+                .HasOne(q => q.Teacher)
+                .WithMany()
+                .HasForeignKey(q => q.TeacherId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<QuizQuestion>()
+                .HasOne(q => q.Quiz)
+                .WithMany(q => q.Questions)
+                .HasForeignKey(q => q.QuizId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StudentQuizSubmission>()
+                .HasOne(s => s.Quiz)
+                .WithMany()
+                .HasForeignKey(s => s.QuizId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StudentQuizSubmission>()
+                .HasOne(s => s.Student)
+                .WithMany()
+                .HasForeignKey(s => s.StudentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StudentQuizAnswer>()
+                .HasOne(a => a.Question)
+                .WithMany()
+                .HasForeignKey(a => a.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<StudentQuizAnswer>()
+                .HasOne(a => a.Submission)
+                .WithMany(s => s.Answers)
+                .HasForeignKey(a => a.SubmissionId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public void DataSeed()
