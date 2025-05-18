@@ -9,7 +9,7 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a asp-controller="Account" asp-action="Logout" class="navbar-brand text-white me-auto">
+        <a asp-controller="Account" asp-action="SignIn" class="navbar-brand text-white me-auto">
             <i class="bi bi-box-arrow-left"></i>
         </a>
 
@@ -111,7 +111,7 @@
             <h2 class="section-title mb-4">Quick Actions</h2>
             <div class="row g-3">
                 <div class="col-md-3">
-                    <a asp-controller="Students" asp-action="Create" class="quick-action-card">
+                    <a asp-controller="Student" asp-action="Create" class="quick-action-card">
                         <div class="icon-wrapper bg-primary">
                             <i class="bi bi-person-plus"></i>
                         </div>
@@ -119,7 +119,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a asp-controller="Teachers" asp-action="Create" class="quick-action-card">
+                    <a asp-controller="Teatcher" asp-action="Create" class="quick-action-card">
                         <div class="icon-wrapper bg-success">
                             <i class="bi bi-person-video3"></i>
                         </div>
@@ -127,19 +127,19 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a asp-controller="Announcements" asp-action="Create" class="quick-action-card">
+                    <a asp-controller="Quiz" asp-action="Create" class="quick-action-card">
                         <div class="icon-wrapper bg-warning">
-                            <i class="bi bi-megaphone"></i>
+                            <i class="bi bi-patch-question"></i>
                         </div>
-                        <span>Send Announcement</span>
+                        <span>Create a Quiz</span>
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a asp-controller="Reports" asp-action="Index" class="quick-action-card">
+                    <a asp-controller="Attendance" asp-action="AttendanceStats" class="quick-action-card">
                         <div class="icon-wrapper bg-info">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <i class="bi bi-calendar-check"></i>
                         </div>
-                        <span>Generate Report</span>
+                        <span>Show Attendance</span>
                     </a>
                 </div>
             </div>
@@ -153,7 +153,7 @@
             <div class="row g-4">
                 <!-- Feature Cards -->
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Students")">
+                    <div class="feature-card" data-link="@Url.Action("Index", "Student")">
                         <div class="card-icon">
                             <i class="bi bi-people-fill"></i>
                         </div>
@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Teachers")">
+                    <div class="feature-card" data-link="@Url.Action("Index", "Teatcher")">
                         <div class="card-icon">
                             <i class="bi bi-person-video3"></i>
                         </div>
@@ -192,27 +192,27 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Grades")">
+                    <div class="feature-card" data-link="@Url.Action("Index", "Quiz")">
                         <div class="card-icon">
-                            <i class="bi bi-journal-bookmark"></i>
+                            <i class="bi bi-patch-question"></i>
                         </div>
-                        <h3>Gradebook</h3>
-                        <p>Record, analyze, and manage student grades and performance</p>
+                        <h3>Quiz System</h3>
+                        <p>Create, manage, and analyze quizzes and assessments</p>
                         <div class="card-footer">
-                            <span class="badge bg-warning">18 Classes</span>
+                            <span class="badge bg-warning">18 Active</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Reports")">
+                    <div class="feature-card" data-link="@Url.Action("Create", "Assignment")">
                         <div class="card-icon">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <i class="bi bi-journal-text"></i>
                         </div>
-                        <h3>Reports & Analytics</h3>
-                        <p>Generate detailed reports and view system analytics</p>
+                        <h3>Assignments</h3>
+                        <p>Create, manage, and track student assignments</p>
                         <div class="card-footer">
-                            <span class="badge bg-danger">New</span>
+                            <span class="badge bg-danger">5 Pending</span>
                         </div>
                     </div>
                 </div>
