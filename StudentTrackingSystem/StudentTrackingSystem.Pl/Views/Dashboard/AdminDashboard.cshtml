@@ -85,9 +85,10 @@
                     <li><a class="dropdown-item" asp-controller="Settings" asp-action="Index"><i class="bi bi-gear me-2"></i>Settings</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="SignOut">
-                            <i class="bi bi-box-arrow-right"></i> Logout
+                        <a asp-controller="Account" asp-action="SignIn" class="navbar-brand text-white me-auto">
+                            <i class="bi bi-box-arrow-left"></i> Logout
                         </a>
+
                     </li>
                 </ul>
             </div>
@@ -205,7 +206,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Create", "Assignment")">
+                    <div class="feature-card" data-link="@Url.Action("Index", "Assignment")">
                         <div class="card-icon">
                             <i class="bi bi-journal-text"></i>
                         </div>

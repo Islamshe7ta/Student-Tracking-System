@@ -27,6 +27,14 @@ namespace StudentTrackingSystem.Pl.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        [Authorize(Roles = "Teachr,Admin,Studnt")]
+        [Authorize(Roles = "Teachr,Admin,Studnt")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+
         [Authorize(Roles = "Teachr,Admin")]
         public async Task<IActionResult> Create()
         {
@@ -82,7 +90,8 @@ namespace StudentTrackingSystem.Pl.Controllers
                 SubjectId = model.SubjectId,
                 DueDate = model.DueDate,
                 TotalMarks = model.TotalMarks,
-                TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty
+                TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
+                CreatedAt = DateTime.Now
             };
 
             if (model.AssignmentFile != null)
@@ -113,22 +122,21 @@ namespace StudentTrackingSystem.Pl.Controllers
         {
             var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var assignments = await _context.Assignments
-            .Include(a => a.Grade)
-            .Include(a => a.Subject)
-            .Where(a => a.TeacherId == teacherId)
-            .Select(a => new AssignmentDetailsDTO
-            {
-                Id = a.Id,
-                Title = a.Title,
-                Description = a.Description,
-                Grade = a.Grade != null ? a.Grade.Name : string.Empty,
-                Subject = a.Subject != null ? a.Subject.Name : string.Empty,
-                DueDate = a.DueDate,
-                TotalMarks = a.TotalMarks,
-                FileUrl = a.FileUrl,
-                CreatedAt = a.CreatedAt
-            })
-
+                .Include(a => a.Grade)
+                .Include(a => a.Subject)
+                .Where(a => a.TeacherId == teacherId)
+                .Select(a => new AssignmentDetailsDTO
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    Description = a.Description,
+                    Grade = a.Grade != null ? a.Grade.Name : string.Empty,
+                    Subject = a.Subject != null ? a.Subject.Name : string.Empty,
+                    DueDate = a.DueDate,
+                    TotalMarks = a.TotalMarks,
+                    FileUrl = a.FileUrl,
+                    CreatedAt = a.CreatedAt
+                })
                 .ToListAsync();
 
             return View(assignments);
@@ -149,7 +157,6 @@ namespace StudentTrackingSystem.Pl.Controllers
                     Description = a.Description,
                     Grade = a.Grade != null ? a.Grade.Name : string.Empty,
                     Subject = a.Subject != null ? a.Subject.Name : string.Empty,
-
                     DueDate = a.DueDate,
                     TotalMarks = a.TotalMarks,
                     FileUrl = a.FileUrl,
@@ -256,4 +263,4 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(submissions);
         }
     }
-} 
+}
