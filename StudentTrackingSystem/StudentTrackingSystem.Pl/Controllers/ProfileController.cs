@@ -6,23 +6,27 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace StudentTrackingSystem.Pl.Controllers
 {
     [Authorize]
     public class ProfileController : Controller
     {
+        private readonly UserManager<AppUser> _userManager;
         private readonly IStudentRepository _studentRepo;
         private readonly ITeatcherRepository _teacherRepo;
         private readonly IGenaricRepository<Attendance> _attendanceRepo;
         private readonly ILogger<ProfileController> _logger;
 
         public ProfileController(
+            UserManager<AppUser> userManager,
             IStudentRepository studentRepo,
             ITeatcherRepository teacherRepo,
             IGenaricRepository<Attendance> attendanceRepo,
             ILogger<ProfileController> logger)
         {
+            _userManager = userManager;
             _studentRepo = studentRepo;
             _teacherRepo = teacherRepo;
             _attendanceRepo = attendanceRepo;
@@ -33,34 +37,27 @@ namespace StudentTrackingSystem.Pl.Controllers
         {
             try
             {
-                var userEmail = User.Identity?.Name;
-                if (string.IsNullOrEmpty(userEmail))
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
                 {
-                    TempData["Error"] = "لم يتم العثور على البريد الإلكتروني للمستخدم";
+                    TempData["Error"] = "لم يتم العثور على بيانات المستخدم";
                     return RedirectToAction("SignIn", "Account");
                 }
 
-                // Log user roles
-                var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role)
-                                     .Select(c => c.Value);
+                // Get user roles
+                var roles = await _userManager.GetRolesAsync(currentUser);
                 ViewBag.UserRoles = string.Join(", ", roles);
 
-                if (User.IsInRole("Student"))
+                if (roles.Contains("Student"))
                 {
-                    var students = await _studentRepo.GetAllAsync();
-                    var student = students.FirstOrDefault(s => s.EmailAddress == userEmail);
-
+                    var student = (await _studentRepo.GetAllAsync())
+                        .FirstOrDefault(s => s.EmailAddress == currentUser.Email);
+                    
                     if (student != null)
                     {
                         // Get attendance statistics
                         var attendances = await _attendanceRepo.GetAllAsync();
                         var studentAttendances = attendances.Where(a => a.StudentId == student.Id).ToList();
-                        
-                        // Get recent attendance (last 10 records)
-                        ViewBag.RecentAttendance = studentAttendances
-                            .OrderByDescending(a => a.Date)
-                            .Take(10)
-                            .ToList();
                         
                         ViewBag.TotalDays = studentAttendances.Count;
                         ViewBag.PresentDays = studentAttendances.Count(a => a.IsPresent);
@@ -69,26 +66,19 @@ namespace StudentTrackingSystem.Pl.Controllers
                             ? Math.Round((double)ViewBag.PresentDays / ViewBag.TotalDays * 100, 1) 
                             : 0;
 
-                        return View("StudentProfile", student);
-                    }
-                    else
-                    {
-                        TempData["Error"] = $"لم يتم العثور على طالب بالبريد الإلكتروني: {userEmail}";
-                        return RedirectToAction("Index", "Home");
+                        return View("StudentDashboard", student);
                     }
                 }
-                else if (User.IsInRole("Teacher"))
+                else if (roles.Contains("Teatcher"))
                 {
-                    var teachers = await _teacherRepo.GetAllAsync();
-                    var teacher = teachers.FirstOrDefault(t => t.Email == userEmail);
-
+                    var teacher = (await _teacherRepo.GetAllAsync())
+                        .FirstOrDefault(t => t.Email == currentUser.Email);
+                    
                     if (teacher != null)
                     {
-                        // Get attendance statistics for teacher's classes
+                        // Get teaching statistics
                         var attendances = await _attendanceRepo.GetAllAsync();
-                        
-                        // Get recent classes with attendance (last 10 days)
-                        var recentClasses = attendances
+                        var teacherClasses = attendances
                             .GroupBy(a => a.Date)
                             .OrderByDescending(g => g.Key)
                             .Take(10)
@@ -101,30 +91,24 @@ namespace StudentTrackingSystem.Pl.Controllers
                             })
                             .ToList();
 
-                        ViewBag.RecentClasses = recentClasses;
-                        ViewBag.TotalStudents = teachers.Count();
-                        ViewBag.TotalClasses = recentClasses.Count;
-                        ViewBag.AverageAttendance = recentClasses.Any() 
-                            ? Math.Round(recentClasses.Average(c => (double)c.PresentCount / (c.PresentCount + c.AbsentCount) * 100), 1)
+                        ViewBag.RecentClasses = teacherClasses;
+                        ViewBag.TotalStudents = teacherClasses.Sum(c => c.PresentCount + c.AbsentCount);
+                        ViewBag.TotalClasses = teacherClasses.Count;
+                        ViewBag.AverageAttendance = teacherClasses.Any() 
+                            ? Math.Round(teacherClasses.Average(c => (double)c.PresentCount / (c.PresentCount + c.AbsentCount) * 100), 1)
                             : 0;
 
-                        return View("TeacherProfile", teacher);
-                    }
-                    else
-                    {
-                        TempData["Error"] = $"لم يتم العثور على معلم بالبريد الإلكتروني: {userEmail}";
-                        return RedirectToAction("Index", "Home");
+                        return View("TeacherDashboard", teacher);
                     }
                 }
-                else
-                {
-                    TempData["Error"] = "المستخدم ليس طالباً ولا معلماً";
-                    return RedirectToAction("Index", "Home");
-                }
+
+                // If no specific role or data found, show basic profile
+                return View("UserProfile", currentUser);
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"حدث خطأ: {ex.Message}";
+                _logger.LogError(ex, "حدث خطأ أثناء عرض الملف الشخصي");
+                TempData["Error"] = "حدث خطأ أثناء عرض الملف الشخصي";
                 return RedirectToAction("Index", "Home");
             }
         }
