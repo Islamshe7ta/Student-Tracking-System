@@ -1,0 +1,105 @@
+@model List<StudentTrackingSystem.Pl.DTOs.StudentAttendanceStatsDTO>
+@using StudentTrackingSystem.DAL.Models
+
+@{
+    ViewData["Title"] = "Attendance Statistics";
+}
+
+<div class="container mt-4">
+    <h2>Attendance Statistics</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Grade:</label>
+                    <select name="grade" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Grades</option>
+                        @foreach (Grade grade in ViewBag.Grades)
+                        {
+                            if (Context.Request.Query["grade"] == grade.Name)
+                            {
+                                <option value="@grade.Name" selected>@grade.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@grade.Name">@grade.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Date:</label>
+                    <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" onchange="this.form.submit()">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">End Date:</label>
+                    <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Grade</th>
+                    <th>Total Days</th>
+                    <th>Present Days</th>
+                    <th>Absent Days</th>
+                    <th>Attendance Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stat in Model.OrderByDescending(s => s.AttendancePercentage))
+                {
+                    <tr>
+                        <td>@stat.StudentName</td>
+                        <td>@stat.Grade</td>
+                        <td>@stat.TotalDays</td>
+                        <td class="text-success">@stat.PresentDays</td>
+                        <td class="text-danger">@stat.AbsentDays</td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                @{
+                                    var presentPercentage = stat.TotalDays > 0 ? (stat.PresentDays * 100.0 / stat.TotalDays) : 0;
+                                    var absentPercentage = stat.TotalDays > 0 ? (stat.AbsentDays * 100.0 / stat.TotalDays) : 0;
+                                }
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: @presentPercentage%" 
+                                     aria-valuenow="@presentPercentage" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    @presentPercentage.ToString("F1")%
+                                </div>
+                                <div class="progress-bar bg-danger" role="progressbar" 
+                                     style="width: @absentPercentage%" 
+                                     aria-valuenow="@absentPercentage" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    @absentPercentage.ToString("F1")%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add tooltips to show exact percentages
+            $('.progress-bar').each(function() {
+                $(this).tooltip({
+                    title: $(this).text(),
+                    placement: 'top'
+                });
+            });
+        });
+    </script>
+} 

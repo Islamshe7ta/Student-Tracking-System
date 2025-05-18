@@ -11,11 +11,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/custom_styles.css" /> <!-- Link to global custom styles -->
+    <link rel="stylesheet" href="~/css/custom_styles.css" />
     <link rel="stylesheet" href="~/css/ShowStudents.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        /* Custom styles for action buttons */
+        .action-buttons-container {
+            display: flex;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
 
+        .action-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+            .action-button i {
+                margin-right: 3px;
+            }
+
+        /* Status badge style */
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive filters bar */
+        .filters-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Push the add button to the right */
+        .ms-auto {
+            margin-left: auto !important;
+        }
+
+        /* Student image styling */
+        .student-img-sm {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        
+    </style>
 </head>
 <body>
     <div class="container mt-4" style="width:94%">
@@ -29,9 +88,9 @@
             </div>
         }
 
-        <div class="row mb-3 align-items-center">
-            <div class="col-md-8">
-                <label for="gradeFilter" class="form-label me-2">Filter by Grade:</label>
+        <div class="filters-bar mb-3">
+            <div class="filter-group">
+                <label for="gradeFilter" class="form-label me-2 mb-0">Filter by Grade:</label>
                 <select id="gradeFilter" class="form-select d-inline-block" style="width: auto;">
                     <option value="all" selected>All Grades</option>
                     @foreach (var grade in ViewBag.Grades)
@@ -40,7 +99,12 @@
                     }
                 </select>
             </div>
-            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+
+            <div class="filter-group">
+                <input type="text" id="studentSearch" class="form-control" placeholder="Search by student name..." />
+            </div>
+
+            <div class="filter-group ms-auto">
                 <a href="@Url.Action("Create", "Student")" class="btn btn-primary">
                     <i class="fas fa-user-plus"></i> Add New Student
                 </a>
@@ -79,18 +143,20 @@
                                 <td data-label="Name">@student.FullName</td>
                                 <td data-label="Email">@student.EmailAddress</td>
                                 <td data-label="Grade">@student.Grade</td>
-                                <td data-label="Parent">@(student.ParentName ?? "N/A")</td> <!-- Display ParentName or N/A -->
-                                <td data-label="Status"><span class="status-badge status-active">Active</span></td> <!-- Example Status -->
-                                <td data-label="Actions" class="action-buttons-group">
-                                    <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info btn-sm" title="Details">
-                                        <i class="bi bi-eye-fill"></i> Details
-                                    </a>
-                                    <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-warning btn-sm" title="Edit">
-                                        <i class="bi bi-pencil-fill"></i> Edit
-                                    </a>
-                                    <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger btn-sm" title="Delete">
-                                        <i class="bi bi-trash-fill"></i> Delete
-                                    </a>
+                                <td data-label="Parent">@(student.ParentName ?? "N/A")</td>
+                                <td data-label="Status"><span class="status-badge status-active">Active</span></td>
+                                <td data-label="Actions">
+                                    <div class="action-buttons-container">
+                                        <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info btn-sm action-button" title="Details">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-warning btn-sm action-button" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger btn-sm action-button" title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -109,21 +175,29 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Basic filtering example (client-side, can be enhanced with server-side filtering)
-        $(document).ready(function(){
-            $("#gradeFilter").on("change", function() {
-                var value = $(this).val().toLowerCase();
-                if (value === "all") {
-                    $("table tbody tr").show();
-                } else {
-                    $("table tbody tr").hide();
-                    $("table tbody tr").filter(function() {
-                        return $(this).find("td[data-label='Grade']").text().toLowerCase().indexOf(value) > -1;
-                    }).show();
-                }
-            });
+        $(document).ready(function () {
+            function applyFilters() {
+                var gradeValue = $("#gradeFilter").val().toLowerCase();
+                var nameValue = $("#studentSearch").val().toLowerCase();
+
+                $("table tbody tr").hide().filter(function() {
+                    var row = $(this);
+                    var gradeMatch = true;
+                    var nameMatch = true;
+
+                    if (gradeValue !== "all") {
+                        gradeMatch = row.find("td[data-label='Grade']").text().toLowerCase().indexOf(gradeValue) > -1;
+                    }
+                    if (nameValue !== "") {
+                        nameMatch = row.find("td[data-label='Name']").text().toLowerCase().indexOf(nameValue) > -1;
+                    }
+                    return gradeMatch && nameMatch;
+                }).show();
+            }
+
+            $("#gradeFilter").on("change", applyFilters);
+            $("#studentSearch").on("keyup", applyFilters);
         });
     </script>
 </body>
 </html>
-

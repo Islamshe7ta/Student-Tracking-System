@@ -1,0 +1,118 @@
+@model StudentTrackingSystem.Pl.DTOs.BatchAttendanceDTO
+@using StudentTrackingSystem.DAL.Models
+
+@{
+    ViewData["Title"] = "Batch Attendance";
+}
+
+<div class="container mt-4">
+    <h2>Batch Attendance</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form method="get" class="form-inline">
+                <div class="form-group">
+                    <label class="mr-2">Filter by Grade:</label>
+                    <select name="grade" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Grades</option>
+                        @foreach (Grade grade in ViewBag.Grades)
+                        {
+                            if (Context.Request.Query["grade"] == grade.Name)
+                            {
+                                <option value="@grade.Name" selected>@grade.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@grade.Name">@grade.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Students.Any())
+    {
+        <div class="alert alert-info">
+            All students have their attendance recorded for today.
+        </div>
+    }
+    else
+    {
+        <form asp-action="SaveBatchAttendance" method="post">
+            <input type="hidden" asp-for="Grade" />
+            <input type="hidden" asp-for="Date" />
+
+            <div class="row mb-3">
+                <div class="col">
+                    <button type="button" class="btn btn-success" onclick="selectAll(true)">Select All Present</button>
+                    <button type="button" class="btn btn-danger" onclick="selectAll(false)">Select All Absent</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Students.Count; i++)
+                        {
+                            <tr>
+                                <td>@Model.Students[i].StudentName</td>
+                                <td>@Model.Students[i].Grade</td>
+                                <td>
+                                    <input type="hidden" asp-for="@Model.Students[i].StudentId" />
+                                    <input type="hidden" asp-for="@Model.Students[i].StudentName" />
+                                    <input type="hidden" asp-for="@Model.Students[i].Grade" />
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input attendance-toggle" type="checkbox" 
+                                               asp-for="@Model.Students[i].IsPresent" 
+                                               data-student-id="@Model.Students[i].StudentId">
+                                        <label class="form-check-label">
+                                            @(Model.Students[i].IsPresent ? "Present" : "Absent")
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Save Attendance</button>
+                    <a asp-action="ShowAttendance" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function selectAll(isPresent) {
+            $('.attendance-toggle').prop('checked', isPresent);
+            updateLabels();
+        }
+
+        function updateLabels() {
+            $('.attendance-toggle').each(function() {
+                var label = $(this).next('label');
+                label.text($(this).prop('checked') ? 'Present' : 'Absent');
+            });
+        }
+
+        $(document).ready(function() {
+            $('.attendance-toggle').change(function() {
+                updateLabels();
+            });
+        });
+    </script>
+} 

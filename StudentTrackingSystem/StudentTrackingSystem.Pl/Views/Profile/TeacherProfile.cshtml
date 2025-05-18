@@ -1,0 +1,95 @@
+@model StudentTrackingSystem.DAL.Models.Teatcher
+@{
+    ViewData["Title"] = "Teacher Profile";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                    </div>
+                    <h4 class="card-title">@Model.FullName</h4>
+                    <p class="text-muted">@Model.Subject</p>
+                    <hr>
+                    <div class="text-start">
+                        <p><i class="bi bi-envelope"></i> @Model.Email</p>
+                        <p><i class="bi bi-telephone"></i> @Model.PhoneNumber</p>
+                        <p><i class="bi bi-geo-alt"></i> @Model.Email</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teaching Statistics -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-book"></i> Teaching Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-primary">@ViewBag.TotalStudents</h3>
+                                <p class="text-muted">Total Students</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-success">@ViewBag.TotalClasses</h3>
+                                <p class="text-muted">Classes Taught</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-info">@ViewBag.AverageAttendance%</h3>
+                                <p class="text-muted">Average Attendance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Classes -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-week"></i> Recent Classes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Grade</th>
+                                    <th>Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var classRecord in ViewBag.RecentClasses ?? new List<dynamic>())
+                                {
+                                    <tr>
+                                        <td>@classRecord.Date.ToString("dd/MM/yyyy")</td>
+                                        <td>@classRecord.Grade</td>
+                                        <td>
+                                            <span class="badge bg-success">@classRecord.PresentCount Present</span>
+                                            <span class="badge bg-danger">@classRecord.AbsentCount Absent</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

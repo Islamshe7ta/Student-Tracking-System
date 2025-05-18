@@ -83,8 +83,9 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
         private void SeedRoles()
         {
             var adminRole = Roles.Find(Consts.Constants.AdminRoleId);
-            var TeatcherRoleId = Roles.Find(Consts.Constants.TeatcherRoleId);
-            var StudentRoleId = Roles.Find(Consts.Constants.StudentRoleId);
+            var teatcherRoleId = Roles.Find(Consts.Constants.TeatcherRoleId);
+            var studentRoleId = Roles.Find(Consts.Constants.StudentRoleId);
+
             if (adminRole == null)
             {
                 Roles.Add(new IdentityRole
@@ -96,23 +97,23 @@ namespace StudentTrackingSystem.DAL.Data.Contexts
                 });
             }
 
-            if (TeatcherRoleId == null)
+            if (teatcherRoleId == null)
             {
                 Roles.Add(new IdentityRole
                 {
-                    Name = "Teachr",
-                    NormalizedName = "Teachr".ToUpper(),
+                    Name = "Teatcher",
+                    NormalizedName = "Teatcher".ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString("D"),
                     Id = Consts.Constants.TeatcherRoleId,
                 });
             }
             
-            if (StudentRoleId == null)
+            if (studentRoleId == null)
             {
                 Roles.Add(new IdentityRole
                 {
-                    Name = "Studnt",
-                    NormalizedName = "Studnt".ToUpper(),
+                    Name = "Student",
+                    NormalizedName = "Student".ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString("D"),
                     Id = Consts.Constants.StudentRoleId,
                 });

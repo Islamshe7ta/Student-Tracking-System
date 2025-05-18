@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using StudentTrackingSystem.DAL.Data.Contexts;
+using Microsoft.Extensions.Logging;
 
 namespace StudentTrackingSystem.PL.Controllers
 {
@@ -17,12 +18,14 @@ namespace StudentTrackingSystem.PL.Controllers
 
         private readonly AppDbContext appDb;
         private readonly EmailService _emailService;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager , AppDbContext appDb,  EmailService emailService )
+        private readonly ILogger<AccountController> _logger;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager , AppDbContext appDb,  EmailService emailService, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             this.appDb = appDb;
             _emailService = emailService;
+            _logger = logger;
 
  
         }
@@ -45,8 +48,6 @@ namespace StudentTrackingSystem.PL.Controllers
 
                     if (isTeacherEmail)
                     {
-                        
-
                         user = new AppUser
                         {
                             UserName = model.UserName,
@@ -56,7 +57,7 @@ namespace StudentTrackingSystem.PL.Controllers
                             IsAgree = model.IsAgree
                         };
                         var result = await _userManager.CreateAsync(user, model.Password);
-                         await _userManager.AddToRoleAsync(user, "Teachr");
+                        await _userManager.AddToRoleAsync(user, "Teatcher");
 
                         if (result.Succeeded)
                         {
@@ -65,21 +66,17 @@ namespace StudentTrackingSystem.PL.Controllers
 
                         foreach (var error in result.Errors)
                             ModelState.AddModelError("", error.Description);
-                       }
-                       else
-                       {
-                       ModelState.AddModelError("", "User already exists.");
-                      }
-
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "User already exists.");
                     }
 
-
-                    // Check if this email exists in the Teachers table
+                    // Check if this email exists in the Students table
                     var isStudentEmail = appDb.Students.Any(S => S.EmailAddress == model.Email);
 
                     if (isStudentEmail)
                     {
-
                         user = new AppUser
                         {
                             UserName = model.UserName,
@@ -88,26 +85,23 @@ namespace StudentTrackingSystem.PL.Controllers
                             Email = model.Email,
                             IsAgree = model.IsAgree
                         };
-                    var result = await _userManager.CreateAsync(user, model.Password);
-                    await _userManager.AddToRoleAsync(user, "Studnt");
-                    if (result.Succeeded)
+                        var result = await _userManager.CreateAsync(user, model.Password);
+                        await _userManager.AddToRoleAsync(user, "Student");
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction("SignIn");
+                        }
+
+                        foreach (var error in result.Errors)
+                            ModelState.AddModelError("", error.Description);
+                    }
+                    else
                     {
-                        return RedirectToAction("SignIn");
+                        ModelState.AddModelError("", "User already exists.");
                     }
-
-                    foreach (var error in result.Errors)
-                        ModelState.AddModelError("", error.Description);
-                    }
-                   else
-                   {
-                      ModelState.AddModelError("", "User already exists.");
-                   }
-                      
-
-                  }
-
+                }
+            }
             return View();
-
         }
 
             
@@ -130,18 +124,7 @@ namespace StudentTrackingSystem.PL.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMy, false);
                     if (result.Succeeded)
                     {
-                        if (await _userManager.IsInRoleAsync(user, "admin"))
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                        else if (await _userManager.IsInRoleAsync(user, "Teachr"))
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                        else if (await _userManager.IsInRoleAsync(user, "Studnt"))
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                        return RedirectToAction("Index", "Home");
                     }
                 }
 

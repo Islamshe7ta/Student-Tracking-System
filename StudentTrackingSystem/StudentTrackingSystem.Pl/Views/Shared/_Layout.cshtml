@@ -41,10 +41,9 @@
                             <a class="nav-link" asp-controller="Subject" asp-action="Index">📚 Subjects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Attendance" asp-action="AddAttendance">Add Attendance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Attendance" asp-action="ShowAttendance">Show Attendance</a>
+                            <a class="nav-link" asp-controller="Attendance" asp-action="Index">
+                                <i class="bi bi-calendar-check"></i> Attendance
+                            </a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
@@ -82,6 +81,11 @@
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                                    <i class="bi bi-person-circle"></i> My Profile
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="SignOut">
                                     <i class="bi bi-box-arrow-right"></i> Logout

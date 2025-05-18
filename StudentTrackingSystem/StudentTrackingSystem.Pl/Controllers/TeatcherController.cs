@@ -22,8 +22,18 @@ namespace StudentTrackingSystem.PL.Controllers
         public async Task<IActionResult> Index()
         {
             var teachers = await _unitOfWork.TeatcherRepository.GetAllWithSubjectAsync();
+
+            // Add this 👇
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
+            ViewBag.Subjects = subjects.Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name
+            }).ToList();
+
             return View(teachers);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()

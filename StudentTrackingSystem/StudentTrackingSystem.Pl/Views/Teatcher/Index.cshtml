@@ -6,16 +6,68 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Student Tracking System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/custom_styles.css" /> 
+    <link rel="stylesheet" href="~/css/custom_styles.css" />
     <link rel="stylesheet" href="~/css/ShowStudents.css" /> <!-- Specific styles for this page -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        /* Custom styles for action buttons */
+        .action-buttons-container {
+            display: flex;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
 
+        .action-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+            .action-button i {
+                margin-right: 3px;
+            }
+
+        /* Status badge style */
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive filters bar */
+        .filters-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Push the add button to the right */
+        .ms-auto {
+            margin-left: auto !important;
+        }
+
+        
+    </style>
 </head>
 <body>
     <div class="container mt-4" style="width:94%">
@@ -29,9 +81,9 @@
             </div>
         }
 
-        <div class="row mb-3 align-items-center">
-            <div class="col-md-auto">
-                <label for="subjectFilter" class="form-label me-2">Filter by Subject:</label>
+        <div class="filters-bar mb-3">
+            <div class="filter-group">
+                <label for="subjectFilter" class="form-label me-2 mb-0">Filter by Subject:</label>
                 <select id="subjectFilter" class="form-select d-inline-block" style="width: auto;">
                     <option value="all" selected>All Subjects</option>
                     @if (ViewBag.Subjects != null)
@@ -43,10 +95,12 @@
                     }
                 </select>
             </div>
-            <div class="col-md-auto mt-2 mt-md-0">
-                 <input type="text" id="nameSearchInput" class="form-control d-inline-block" style="width: auto;" placeholder="Search by Name...">
+
+            <div class="filter-group">
+                <input type="text" id="nameSearchInput" class="form-control" placeholder="Search by Name...">
             </div>
-            <div class="col-md text-md-end mt-2 mt-md-0">
+
+            <div class="filter-group ms-auto">
                 <a href="@Url.Action("Create", "Teatcher")" class="btn btn-primary">
                     <i class="fas fa-user-plus"></i> Add New Teacher
                 </a>
@@ -62,7 +116,7 @@
                         <th>Email</th>
                         <th>Subject</th>
                         <th>Phone</th>
-                        <th>Status</th> <!-- Placeholder for visual parity -->
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -86,17 +140,19 @@
                                 <td data-label="Email">@teacher.Email</td>
                                 <td data-label="Subject">@(teacher.Subject?.Name ?? "N/A")</td>
                                 <td data-label="Phone">@teacher.PhoneNumber</td>
-                                <td data-label="Status"><span class="status-badge status-active">Active</span></td> <!-- Example Status -->
-                                <td data-label="Actions" class="action-buttons-group">
-                                    <a href="@Url.Action("Details", "Teatcher", new { id = teacher.Id })" class="btn btn-info btn-sm" title="Details">
-                                        <i class="bi bi-eye-fill"></i> Details
-                                    </a>
-                                    <a href="@Url.Action("Edit", "Teatcher", new { id = teacher.Id })" class="btn btn-warning btn-sm" title="Edit">
-                                        <i class="bi bi-pencil-fill"></i> Edit
-                                    </a>
-                                    <a href="@Url.Action("Delete", "Teatcher", new { id = teacher.Id })" class="btn btn-danger btn-sm" title="Delete">
-                                        <i class="bi bi-trash-fill"></i> Delete
-                                    </a>
+                                <td data-label="Status"><span class="status-badge status-active">Active</span></td>
+                                <td data-label="Actions">
+                                    <div class="action-buttons-container">
+                                        <a href="@Url.Action("Details", "Teatcher", new { id = teacher.Id })" class="btn btn-info btn-sm action-button" title="Details">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Teatcher", new { id = teacher.Id })" class="btn btn-warning btn-sm action-button" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Teatcher", new { id = teacher.Id })" class="btn btn-danger btn-sm action-button" title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -126,10 +182,10 @@
                     var nameMatch = true;
 
                     if (subjectValue !== "all") {
-                        subjectMatch = row.find("td[data-label=\'Subject\']").text().toLowerCase().indexOf(subjectValue) > -1;
+                        subjectMatch = row.find("td[data-label='Subject']").text().toLowerCase().indexOf(subjectValue) > -1;
                     }
                     if (nameValue !== "") {
-                        nameMatch = row.find("td[data-label=\'Name\']").text().toLowerCase().indexOf(nameValue) > -1;
+                        nameMatch = row.find("td[data-label='Name']").text().toLowerCase().indexOf(nameValue) > -1;
                     }
                     return subjectMatch && nameMatch;
                 }).show();
@@ -141,4 +197,3 @@
     </script>
 </body>
 </html>
-
