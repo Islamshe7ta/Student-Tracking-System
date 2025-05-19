@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -60,13 +60,22 @@
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                           
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                                    <i class="fas fa-user-circle me-1"></i>My Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="SignOut">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Sign Out
+                                </a>
+                            </li>
                         }
                         else
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="SignIn">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
                                 </a>
                             </li>
                         }
@@ -94,4 +103,4 @@
 
     @RenderSection("Scripts", required: false)
 </body>
-</html>
+</html> 

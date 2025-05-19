@@ -1,0 +1,67 @@
+﻿@using StudentTrackingSystem.DAL.Data.Models
+@model Assignment
+@{
+    ViewData["Title"] = "Teacher Assignments";
+}
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+    .btn {
+        padding: 12px 20px;
+        font-weight: 500;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Teacher Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Teacher View
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a class="btn btn-outline-primary" asp-controller="Assignment" asp-action="Create">
+                            <i class="fas fa-plus-circle me-2"></i>Add Assignment
+                        </a>
+                        <a class="btn btn-outline-primary" asp-controller="Assignment" asp-action="TeacherAssignments">
+                            <i class="fas fa-list-alt me-2"></i>Teacher Assignments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-graduate me-2"></i>Student View
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        <a class="btn btn-outline-success" asp-controller="Assignment" asp-action="StudentAssignments">
+                            <i class="fas fa-book me-2"></i>Student Assignments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

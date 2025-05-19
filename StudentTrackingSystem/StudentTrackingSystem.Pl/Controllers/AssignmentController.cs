@@ -26,8 +26,22 @@ namespace StudentTrackingSystem.Pl.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+        [Authorize(Roles = "Teatcher,Admin,Student")]
+        public async Task<IActionResult> Index()
+        {
+           
 
-        [Authorize(Roles = "Teachr,Admin")]
+            return View();
+        }
+        [Authorize(Roles = "Teatcher,Admin")]
+        public async Task<IActionResult> IndexTeacher()
+        {
+
+
+            return View();
+        }
+
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Grades = await _context.Grades
@@ -50,7 +64,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teachr,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Create(CreateAssignmentDTO model)
         {
             if (!ModelState.IsValid)
@@ -108,7 +122,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return RedirectToAction(nameof(TeacherAssignments));
         }
 
-        [Authorize(Roles = "Teachr,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> TeacherAssignments()
         {
             var teacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -134,7 +148,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(assignments);
         }
 
-        [Authorize(Roles = "Studnt,Admin")]
+        [Authorize(Roles = "Student,Admin")]
         public async Task<IActionResult> StudentAssignments()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -178,7 +192,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Studnt,Admin")]
+        [Authorize(Roles = "Studnt,Admin,Teatcher")]
         public async Task<IActionResult> Submit(SubmitAssignmentDTO model)
         {
             if (!ModelState.IsValid)
@@ -227,7 +241,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teachr,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Grade(GradeAssignmentDTO model)
         {
             if (!ModelState.IsValid)
@@ -244,7 +258,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return RedirectToAction(nameof(TeacherAssignments));
         }
 
-        [Authorize(Roles = "Teachr,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Submissions(int id)
         {
             var submissions = await _context.StudentAssignments

@@ -19,6 +19,21 @@ namespace StudentTrackingSystem.Pl.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Teacher,Admin,Studnt")]
+        public async Task<IActionResult> ShowForStudent()
+        {
+
+            return View();
+        }
+
+
+        [Authorize(Roles = "Teacher,Admin")]
+        public async Task<IActionResult> ShowForTeacher_Admin()
+        {
+
+            return View();
+        }
+
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> Create()
         {

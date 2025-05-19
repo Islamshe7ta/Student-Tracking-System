@@ -107,7 +107,7 @@
             <h2 class="section-title mb-4">Quick Actions</h2>
             <div class="row g-3">
                 <div class="col-md-3">
-                    <a asp-controller="Attendance" asp-action="Index" class="quick-action-card">
+                    <a asp-controller="Attendance" asp-action="BatchAttendance" class="quick-action-card">
                         <div class="icon-wrapper bg-primary">
                             <i class="bi bi-calendar-check"></i>
                         </div>
@@ -123,7 +123,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a asp-controller="Assignments" asp-action="Create" class="quick-action-card">
+                    <a asp-controller="Assignment" asp-action="Create" class="quick-action-card">
                         <div class="icon-wrapper bg-warning">
                             <i class="bi bi-list-task"></i>
                         </div>
@@ -149,7 +149,7 @@
             <div class="row g-4">
                 <!-- Feature Cards -->
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Students")">
+                    <div class="feature-card" data-link="@Url.Action("Index", "Student")">
                         <div class="card-icon">
                             <i class="bi bi-people-fill"></i>
                         </div>
@@ -188,7 +188,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="feature-card" data-link="@Url.Action("Index", "Assignments")">
+                    <div class="feature-card" data-link="@Url.Action("IndexTeacher", "Assignment")">
                         <div class="card-icon">
                             <i class="bi bi-list-task"></i>
                         </div>
