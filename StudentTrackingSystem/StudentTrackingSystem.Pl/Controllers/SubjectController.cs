@@ -48,14 +48,14 @@ namespace StudentTrackingSystem.Controllers
 
             return View(subject);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var grades = await _unitOfWork.GradeRepository.GetAllAsync();
             ViewBag.Grades = new SelectList(grades, "Id", "Name");
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Subject subject)
@@ -71,7 +71,7 @@ namespace StudentTrackingSystem.Controllers
             ViewBag.Grades = new SelectList(grades, "Id", "Name", subject.GradeId);
             return View(subject);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var subject = await _unitOfWork.SubjectRepository.GetAsync(id);
@@ -84,7 +84,7 @@ namespace StudentTrackingSystem.Controllers
             ViewBag.Grades = new SelectList(grades, "Id", "Name", subject.GradeId);
             return View(subject);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Subject subject)
@@ -119,7 +119,7 @@ namespace StudentTrackingSystem.Controllers
             ViewBag.Grades = new SelectList(grades, "Id", "Name", subject.GradeId);
             return View(subject);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var subject = await _appDb.Subjects
@@ -133,7 +133,7 @@ namespace StudentTrackingSystem.Controllers
 
             return View(subject);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

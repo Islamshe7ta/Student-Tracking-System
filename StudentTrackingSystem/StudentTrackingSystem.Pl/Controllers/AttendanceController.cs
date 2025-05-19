@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentTrackingSystem.Pl.Controllers
 {
@@ -28,7 +29,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             _gradeRepo = gradeRepo;
             _unitOfWork = unitOfWork;
         }
-
+        
         public async Task<IActionResult> Index()
         {
             var today = DateTime.Today;
@@ -80,6 +81,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         // الصفحة لاظهار الطلاب اللي هيتم تسجيل حضورهم (فقط الطلاب اللي لم يؤخذ لهم حضور اليوم)
+        [Authorize(Roles = "Admin,Teatcher")]
         public async Task<IActionResult> AddAttendance(string? grade = null)
         {
             var today = DateTime.Today;
@@ -117,7 +119,7 @@ namespace StudentTrackingSystem.Pl.Controllers
 
             return View(dtoList);
         }
-
+        [Authorize(Roles = "Admin,Teatcher")]
         // اضافة حضور جديد
         [HttpPost]
         public async Task<IActionResult> MarkAttendance(int studentId, bool isPresent)
@@ -136,6 +138,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         // عرض كل الحضور مع فلترة الدرجة
+        [Authorize(Roles = "Admin,Teatcher")]
         public async Task<IActionResult> ShowAttendance(string? grade = null)
         {
             var attendances = await _attendanceRepo.GetAllAsync();
@@ -162,7 +165,7 @@ namespace StudentTrackingSystem.Pl.Controllers
 
             return View(attendanceDTOs);
         }
-
+        [Authorize(Roles = "Admin,Teatcher")]
         public async Task<IActionResult> BatchAttendance(string? grade = null)
         {
             var today = DateTime.Today;
@@ -203,7 +206,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             ViewBag.Grades = (await _gradeRepo.GetAllAsync()).ToList();
             return View(batchAttendance);
         }
-
+        [Authorize(Roles = "Admin,Teatcher")]
         [HttpPost]
         public async Task<IActionResult> SaveBatchAttendance(BatchAttendanceDTO model)
         {
@@ -230,7 +233,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             TempData["SuccessMessage"] = "Attendance has been saved successfully!";
             return RedirectToAction(nameof(ShowAttendance), new { grade = model.Grade });
         }
-
+        [Authorize(Roles = "Admin,Teatcher")]
         public async Task<IActionResult> AttendanceStats(string? grade = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             var students = await _studentRepo.GetAllAsync();

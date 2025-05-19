@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace StudentTrackingSystem.Pl.Controllers
 {
@@ -20,11 +21,13 @@ namespace StudentTrackingSystem.Pl.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<AssignmentController> _logger;
 
-        public AssignmentController(AppDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AssignmentController(AppDbContext context, IWebHostEnvironment webHostEnvironment, ILogger<AssignmentController> logger)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
         [Authorize(Roles = "Teatcher,Admin,Student")]
         public async Task<IActionResult> Index()
@@ -148,7 +151,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(assignments);
         }
 
-        [Authorize(Roles = "Student,Admin")]
+        [Authorize(Roles = "Student,Admin,Teatcher")]
         public async Task<IActionResult> StudentAssignments()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -192,52 +195,65 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Studnt,Admin,Teatcher")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> Submit(SubmitAssignmentDTO model)
         {
             if (!ModelState.IsValid)
-                return RedirectToAction(nameof(StudentAssignments));
-
-            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var submission = await _context.StudentAssignments
-                .FirstOrDefaultAsync(sa => sa.AssignmentId == model.AssignmentId && sa.StudentId == studentId);
-
-            if (submission == null)
             {
-                submission = new StudentAssignment
-                {
-                    AssignmentId = model.AssignmentId,
-                    StudentId = studentId ?? string.Empty,
-                    SubmissionDate = DateTime.Now,
-                    IsSubmitted = true
-                };
-                _context.StudentAssignments.Add(submission);
-            }
-            else
-            {
-                submission.SubmissionDate = DateTime.Now;
-                submission.IsSubmitted = true;
+                return View(model);
             }
 
-            if (model.SubmissionFile != null)
+            try
             {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "submissions");
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.SubmissionFile.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var submission = await _context.StudentAssignments
+                    .FirstOrDefaultAsync(sa => sa.AssignmentId == model.AssignmentId && sa.StudentId == studentId);
 
-                if (!Directory.Exists(uploadsFolder))
-                    Directory.CreateDirectory(uploadsFolder);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                if (submission == null)
                 {
-                    await model.SubmissionFile.CopyToAsync(fileStream);
+                    submission = new StudentAssignment
+                    {
+                        AssignmentId = model.AssignmentId,
+                        StudentId = studentId ?? string.Empty,
+                        SubmissionDate = DateTime.Now,
+                        IsSubmitted = true
+                    };
+                    _context.StudentAssignments.Add(submission);
+                }
+                else
+                {
+                    submission.SubmissionDate = DateTime.Now;
+                    submission.IsSubmitted = true;
                 }
 
-                submission.SubmittedFileUrl = uniqueFileName;
-            }
+                if (model.SubmissionFile != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "submissions");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.SubmissionFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(StudentAssignments));
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.SubmissionFile.CopyToAsync(fileStream);
+                    }
+
+                    submission.SubmittedFileUrl = uniqueFileName;
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "تم تسليم الواجب بنجاح";
+                return RedirectToAction(nameof(StudentAssignments));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting assignment");
+                ModelState.AddModelError("", "حدث خطأ أثناء تسليم الواجب");
+                return View(model);
+            }
         }
 
         [HttpPost]

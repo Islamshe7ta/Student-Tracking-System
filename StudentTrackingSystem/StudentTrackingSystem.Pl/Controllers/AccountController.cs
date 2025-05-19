@@ -297,7 +297,7 @@ namespace StudentTrackingSystem.PL.Controllers
                             IsAgree = model.IsAgree
                         };
                         var result = await _userManager.CreateAsync(user, model.Password);
-                        await _userManager.AddToRoleAsync(user, "Teacher");
+                        await _userManager.AddToRoleAsync(user, "Teatcher");
 
                         if (result.Succeeded)
                         {

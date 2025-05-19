@@ -19,7 +19,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Teacher,Admin,Studnt")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> ShowForStudent()
         {
 
@@ -230,7 +230,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return RedirectToAction(nameof(Submissions), new { id = submission.QuizId });
         }
 
-        [Authorize(Roles = "Student,Admin")]
+        [Authorize(Roles = "Student,Teacher,Admin")]
         public async Task<IActionResult> StudentQuizzes()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -260,7 +260,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(availableQuizzes);
         }
 
-        [Authorize(Roles = "Student,Admin")]
+        [Authorize(Roles = "Student,Teacher,Admin")]
         public async Task<IActionResult> StudentResults()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -286,7 +286,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(submissions);
         }
 
-        [Authorize(Roles = "Student,Admin")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> TakeQuiz(int id)
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -334,7 +334,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Student,Admin")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> SubmitQuiz(int quizId, string studentName, List<StudentQuizAnswerDTO> answers)
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);

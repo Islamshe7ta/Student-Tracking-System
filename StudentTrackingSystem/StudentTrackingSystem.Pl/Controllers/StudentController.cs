@@ -56,7 +56,7 @@ namespace StudentTrackingSystem.PL.Controllers
 
             return View("Index", studentDTOs);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -71,7 +71,7 @@ namespace StudentTrackingSystem.PL.Controllers
             return View(new StudentDTO());
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StudentDTO studentDTO, IFormFile studentImage)
@@ -132,7 +132,7 @@ namespace StudentTrackingSystem.PL.Controllers
 
             return View(studentDTO);
         }
-
+        [Authorize(Roles = "Admin,Teatcher")]
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -166,7 +166,7 @@ namespace StudentTrackingSystem.PL.Controllers
             return View(studentDTO);
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -209,7 +209,7 @@ namespace StudentTrackingSystem.PL.Controllers
 
             return View(studentDTO);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, StudentDTO studentDTO, IFormFile studentImage)
@@ -317,6 +317,7 @@ namespace StudentTrackingSystem.PL.Controllers
             // If we get here, something went wrong with saving
             return View(studentDTO);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -344,6 +345,7 @@ namespace StudentTrackingSystem.PL.Controllers
 
             return View(studentDTO);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
