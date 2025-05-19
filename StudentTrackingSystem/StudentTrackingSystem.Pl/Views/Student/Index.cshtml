@@ -1,7 +1,9 @@
+@using StudentTrackingSystem.PL.DTOs
 @model IEnumerable<StudentDTO>
 
 @{
     ViewData["Title"] = "Student List";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -9,194 +11,223 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StudentTrackingSystem.Pl</title>
+    <title>@ViewData["Title"] - Student Tracking System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/custom_styles.css" />
-    <link rel="stylesheet" href="~/css/ShowStudents.css" />
+    <link rel="stylesheet" href="~/css/auth-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for action buttons */
-        .action-buttons-container {
-            display: flex;
-            gap: 5px;
-            flex-wrap: nowrap;
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 2rem;
         }
-
-        .action-button {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            white-space: nowrap;
+        .back-button {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2;
+            background: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: var(--primary-color);
+            text-decoration: none;
         }
-
-            .action-button i {
-                margin-right: 3px;
-            }
-
-        /* Status badge style */
+        .back-button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        .table thead th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            padding: 1rem;
+        }
+        .table {
+            background: white;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
         .status-badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            padding: 0.5em 1em;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
-
         .status-active {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: var(--success-color);
+            color: white;
         }
-
-        /* Responsive filters bar */
-        .filters-bar {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        /* Push the add button to the right */
-        .ms-auto {
-            margin-left: auto !important;
-        }
-
-        /* Student image styling */
         .student-img-sm {
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             object-fit: cover;
             border-radius: 50%;
         }
-
-        
+        .action-buttons-group .btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            margin: 0 0.25rem;
+        }
+        .filters-row {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+        .form-control, .form-select {
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 1rem;
+        }
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-4" style="width:94%">
-        <h1 class="page-title">All Students</h1>
+    <!-- Floating Particles Background -->
+    <div class="particles" id="particles-js"></div>
 
-        @if (TempData["Message"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["Message"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
+    <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 
-        <div class="filters-bar mb-3">
-            <div class="filter-group">
-                <label for="gradeFilter" class="form-label me-2 mb-0">Filter by Grade:</label>
-                <select id="gradeFilter" class="form-select d-inline-block" style="width: auto;">
-                    <option value="all" selected>All Grades</option>
-                    @foreach (var grade in ViewBag.Grades)
-                    {
-                        <option value="@grade.Name">@grade.Name</option>
-                    }
-                </select>
+    <div class="main-content">
+        <div class="content-wrapper">
+            <div class="mb-4 text-center">
+                <h1 class="h3">Students List</h1>
+                <p class="text-muted">Manage all students</p>
             </div>
 
-            <div class="filter-group">
-                <input type="text" id="studentSearch" class="form-control" placeholder="Search by student name..." />
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Message"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="row filters-row align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                        <select id="gradeFilter" class="form-select">
+                            <option value="all" selected>All Grades</option>
+                            @foreach (var grade in ViewBag.Grades)
+                            {
+                                <option value="@grade.Name">@grade.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="studentSearch" class="form-control" placeholder="Search by name...">
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="@Url.Action("Create", "Student")" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Add New Student
+                    </a>
+                </div>
             </div>
 
-            <div class="filter-group ms-auto">
-                <a href="@Url.Action("Create", "Student")" class="btn btn-primary">
-                    <i class="fas fa-user-plus"></i> Add New Student
-                </a>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Grade</th>
-                        <th>Parent</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var student in Model)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Grade</th>
+                            <th>Parent</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var student in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(student.ImagePath))
+                                        {
+                                            <img src="@student.ImagePath" alt="@student.FullName" class="student-img-sm">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/img/default-student.png" alt="Default Photo" class="student-img-sm">
+                                        }
+                                    </td>
+                                    <td>@student.FullName</td>
+                                    <td>@student.EmailAddress</td>
+                                    <td>@student.Grade</td>
+                                    <td>@(student.ParentName ?? "N/A")</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td class="action-buttons-group">
+                                        <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td data-label="Photo">
-                                    @if (!string.IsNullOrEmpty(student.ImagePath))
-                                    {
-                                        <img src="@student.ImagePath" alt="@student.FullName" class="student-img-sm">
-                                    }
-                                    else
-                                    {
-                                        <img src="~/img/default-student.png" alt="Default Photo" class="student-img-sm">
-                                    }
-                                </td>
-                                <td data-label="Name">@student.FullName</td>
-                                <td data-label="Email">@student.EmailAddress</td>
-                                <td data-label="Grade">@student.Grade</td>
-                                <td data-label="Parent">@(student.ParentName ?? "N/A")</td>
-                                <td data-label="Status"><span class="status-badge status-active">Active</span></td>
-                                <td data-label="Actions">
-                                    <div class="action-buttons-container">
-                                        <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info btn-sm action-button" title="Details">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-warning btn-sm action-button" title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger btn-sm action-button" title="Delete">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                                <td colspan="7" class="text-center">No students found.</td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center">No students found.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="~/js/auth-scripts.js"></script>
+
     <script>
-        $(document).ready(function () {
+        $(document).ready(function(){
             function applyFilters() {
                 var gradeValue = $("#gradeFilter").val().toLowerCase();
                 var nameValue = $("#studentSearch").val().toLowerCase();
 
-                $("table tbody tr").hide().filter(function() {
+                $("tbody tr").each(function() {
                     var row = $(this);
-                    var gradeMatch = true;
-                    var nameMatch = true;
+                    var grade = row.find("td:eq(3)").text().toLowerCase();
+                    var name = row.find("td:eq(1)").text().toLowerCase();
 
-                    if (gradeValue !== "all") {
-                        gradeMatch = row.find("td[data-label='Grade']").text().toLowerCase().indexOf(gradeValue) > -1;
-                    }
-                    if (nameValue !== "") {
-                        nameMatch = row.find("td[data-label='Name']").text().toLowerCase().indexOf(nameValue) > -1;
-                    }
-                    return gradeMatch && nameMatch;
-                }).show();
+                    var showRow = (gradeValue === "all" || grade.includes(gradeValue)) &&
+                                (name.includes(nameValue));
+
+                    row.toggle(showRow);
+                });
             }
 
-            $("#gradeFilter").on("change", applyFilters);
-            $("#studentSearch").on("keyup", applyFilters);
+            $("#gradeFilter, #studentSearch").on("change keyup", applyFilters);
         });
     </script>
 </body>

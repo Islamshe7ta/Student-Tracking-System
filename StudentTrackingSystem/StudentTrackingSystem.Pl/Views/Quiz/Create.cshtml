@@ -2,184 +2,302 @@
 
 @{
     ViewData["Title"] = "Create Quiz";
+    Layout = null;
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="page-title mb-0">Create New Quiz</h1>
-            <p class="text-muted">Fill in the quiz details and add questions</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Student Tracking System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/common.css" />
+    <link rel="stylesheet" href="~/css/auth-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .quiz-form-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .question-card .remove-question {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            z-index: 2;
+        }
+
+        .question-card .remove-question:hover {
+            background-color: #c82333;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
+
+        .add-question-btn {
+            width: 100%;
+            padding: 1rem;
+            border: 2px dashed var(--primary-color);
+            background: rgba(78,115,223,0.05);
+            color: var(--primary-color);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .add-question-btn:hover {
+            background: rgba(78,115,223,0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-floating > label {
+            padding-left: 1rem;
+        }
+
+        .form-floating > .form-control {
+            padding: 1rem;
+            height: calc(3.5rem + 2px);
+            line-height: 1.25;
+        }
+
+        .form-floating > .form-control-lg {
+            height: calc(4rem + 2px);
+            line-height: 1.25;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles-js"></div>
+
+    <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="quiz-form-card">
+                <h1 class="text-center mb-4">
+                    <i class="fas fa-plus-circle text-primary me-2"></i>Create New Quiz
+                </h1>
+                <p class="text-muted text-center mb-4">Fill in the quiz details and add your questions below</p>
+
+                <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Quiz Details Section -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-info-circle"></i> Quiz Details
+                        </h2>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Name" class="form-control" placeholder="Quiz Name" required />
+                                    <label asp-for="Name">Quiz Name</label>
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="TotalMarks" class="form-control" type="number" min="1" max="100" placeholder="Total Marks" required />
+                                    <label asp-for="TotalMarks">Total Marks</label>
+                                    <span asp-validation-for="TotalMarks" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="GradeId" class="form-select" asp-items="ViewBag.Grades" required>
+                                        <option value="">-- Select Grade --</option>
+                                    </select>
+                                    <label asp-for="GradeId">Grade</label>
+                                    <span asp-validation-for="GradeId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.Subjects" required>
+                                        <option value="">-- Select Subject --</option>
+                                    </select>
+                                    <label asp-for="SubjectId">Subject</label>
+                                    <span asp-validation-for="SubjectId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="StartTime" class="form-control" type="datetime-local" required />
+                                    <label asp-for="StartTime">Start Time</label>
+                                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="EndTime" class="form-control" type="datetime-local" required />
+                                    <label asp-for="EndTime">End Time</label>
+                                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Questions Section -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-question-circle"></i> Questions
+                        </h2>
+                        <div id="questions-container">
+                            <!-- Questions will be added here dynamically -->
+                        </div>
+                        <button type="button" class="add-question-btn" onclick="addQuestion()">
+                            <i class="fas fa-plus me-2"></i> Add New Question
+                        </button>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Create Quiz
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <form asp-action="Create" method="post" class="needs-validation" novalidate>
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="~/js/auth-scripts.js"></script>
 
-        <div class="card shadow mb-4">
-            <div class="card-header bg-navy text-white">
-                <h5 class="mb-0">Quiz Details</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="Name" class="form-label">Quiz Name</label>
-                            <input asp-for="Name" class="form-control" required />
-                            <span asp-validation-for="Name" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="TotalMarks" class="form-label">Total Marks</label>
-                            <input asp-for="TotalMarks" class="form-control" type="number" min="1" max="100" required />
-                            <span asp-validation-for="TotalMarks" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="GradeId" class="form-label">Grade</label>
-                            <select asp-for="GradeId" class="form-select" asp-items="ViewBag.Grades" required>
-                                <option value="">-- Select Grade --</option>
-                            </select>
-                            <span asp-validation-for="GradeId" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="SubjectId" class="form-label">Subject</label>
-                            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.Subjects" required>
-                                <option value="">-- Select Subject --</option>
-                            </select>
-                            <span asp-validation-for="SubjectId" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="StartTime" class="form-label">Start Time</label>
-                            <input asp-for="StartTime" class="form-control" type="datetime-local" required />
-                            <span asp-validation-for="StartTime" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="EndTime" class="form-label">End Time</label>
-                            <input asp-for="EndTime" class="form-control" type="datetime-local" required />
-                            <span asp-validation-for="EndTime" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow mb-4">
-            <div class="card-header bg-navy text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Questions</h5>
-                <button type="button" class="btn btn-light" onclick="addQuestion()">
-                    <i class="fas fa-plus"></i> Add Question
-                </button>
-            </div>
-            <div class="card-body">
-                <div id="questions-container">
-                    <!-- Questions will be added here dynamically -->
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg me-2">
-                <i class="fas fa-save"></i> Save Quiz
-            </button>
-            <a asp-action="Index" class="btn btn-secondary btn-lg">
-                <i class="fas fa-times"></i> Cancel
-            </a>
-        </div>
-    </form>
-</div>
-
-@section Scripts {
     <script>
         let questionCount = 0;
 
         function addQuestion() {
             const container = document.getElementById('questions-container');
             const questionDiv = document.createElement('div');
-            questionDiv.className = 'card mb-3 question-card';
+            questionDiv.className = 'question-card';
             questionDiv.id = `question-${questionCount}`;
 
             questionDiv.innerHTML = `
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0">Question ${questionCount + 1}</h6>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${questionCount})">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="form-label">Question Text</label>
-                                <input type="text" name="Questions[${questionCount}].QuestionText" class="form-control" required />
-                            </div>
+                <button type="button" class="btn btn-danger btn-sm remove-question" onclick="removeQuestion(${questionCount})">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" name="Questions[${questionCount}].QuestionText" class="form-control" placeholder="Question Text" required />
+                            <label>Question Text</label>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select name="Questions[${questionCount}].QuestionType" class="form-select" onchange="toggleQuestionType(${questionCount})" required>
+                                <option value="0">Multiple Choice</option>
+                                <option value="1">Essay</option>
+                            </select>
+                            <label>Question Type</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="options-${questionCount}" class="options-section mt-3">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Question Type</label>
-                                <select name="Questions[${questionCount}].QuestionType" class="form-select" onchange="toggleQuestionType(${questionCount})" required>
-                                    <option value="0">Multiple Choice</option>
-                                    <option value="1">Essay</option>
+                            <div class="form-floating">
+                                <input type="text" name="Questions[${questionCount}].Option1" class="form-control" placeholder="Option 1" required />
+                                <label>Option 1</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="Questions[${questionCount}].Option2" class="form-control" placeholder="Option 2" required />
+                                <label>Option 2</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="Questions[${questionCount}].Option3" class="form-control" placeholder="Option 3" required />
+                                <label>Option 3</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="Questions[${questionCount}].Option4" class="form-control" placeholder="Option 4" required />
+                                <label>Option 4</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select name="Questions[${questionCount}].CorrectOption" class="form-select" required>
+                                    <option value="">-- Select Correct Answer --</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                    <option value="4">Option 4</option>
                                 </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="options-${questionCount}" class="options-section">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Option 1</label>
-                                    <input type="text" name="Questions[${questionCount}].Option1" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Option 2</label>
-                                    <input type="text" name="Questions[${questionCount}].Option2" class="form-control" required />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Option 3</label>
-                                    <input type="text" name="Questions[${questionCount}].Option3" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Option 4</label>
-                                    <input type="text" name="Questions[${questionCount}].Option4" class="form-control" required />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Correct Answer</label>
-                                    <select name="Questions[${questionCount}].CorrectOption" class="form-select" required>
-                                        <option value="">-- Select Correct Answer --</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
-                                        <option value="4">Option 4</option>
-                                    </select>
-                                </div>
+                                <label>Correct Answer</label>
                             </div>
                         </div>
                     </div>
@@ -200,89 +318,11 @@
             const optionsDiv = document.getElementById(`options-${index}`);
             
             if (select.value === "1") { // Essay
-                optionsDiv.style.display = 'none';
-                optionsDiv.querySelectorAll('input, select').forEach(input => {
-                    input.required = false;
-                });
+                optionsDiv.style.display = "none";
             } else { // Multiple Choice
-                optionsDiv.style.display = 'block';
-                optionsDiv.querySelectorAll('input, select').forEach(input => {
-                    input.required = true;
-                });
+                optionsDiv.style.display = "block";
             }
         }
-
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            if (!this.checkValidity()) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            this.classList.add('was-validated');
-        });
-
-        // Initialize datetime-local inputs with current date/time
-        window.addEventListener('load', function() {
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            
-            const startTime = document.querySelector('input[name="StartTime"]');
-            startTime.min = now.toISOString().slice(0, 16);
-            if (!startTime.value) {
-                startTime.value = now.toISOString().slice(0, 16);
-            }
-            
-            const endTime = document.querySelector('input[name="EndTime"]');
-            now.setHours(now.getHours() + 1);
-            endTime.min = now.toISOString().slice(0, 16);
-            if (!endTime.value) {
-                endTime.value = now.toISOString().slice(0, 16);
-            }
-        });
     </script>
-
-    <style>
-        :root {
-            --navy-color: #1a237e;
-            --navy-light: #534bae;
-        }
-
-        .card {
-            transition: all 0.3s ease;
-        }
-        .question-card {
-            border-left: 4px solid var(--navy-color);
-        }
-        .question-card:hover {
-            transform: translateX(5px);
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--navy-color);
-            box-shadow: 0 0 0 0.2rem rgba(26, 35, 126, 0.25);
-        }
-        .btn-light {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-        .btn-light:hover {
-            background-color: #fff;
-            transform: translateY(-2px);
-        }
-        .options-section {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-        }
-        .bg-navy {
-            background-color: var(--navy-color) !important;
-        }
-        .btn-primary {
-            background-color: var(--navy-color);
-            border-color: var(--navy-color);
-        }
-        .btn-primary:hover {
-            background-color: var(--navy-light);
-            border-color: var(--navy-light);
-        }
-    </style>
-} 
+</body>
+</html> 
