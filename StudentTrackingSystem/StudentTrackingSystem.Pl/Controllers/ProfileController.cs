@@ -71,32 +71,23 @@ namespace StudentTrackingSystem.Pl.Controllers
                 }
                 else if (roles.Contains("Teatcher"))
                 {
-                    var teacher = (await _teacherRepo.GetAllAsync())
+                    // Get teacher with subject information
+                    var teacher = (await _teacherRepo.GetAllWithSubjectAsync())
                         .FirstOrDefault(t => t.Email == currentUser.Email);
                     
                     if (teacher != null)
                     {
-                        // Get teaching statistics
+                        // Get basic attendance statistics
                         var attendances = await _attendanceRepo.GetAllAsync();
-                        var teacherClasses = attendances
+                        var totalClasses = attendances
                             .GroupBy(a => a.Date)
-                            .OrderByDescending(g => g.Key)
-                            .Take(10)
-                            .Select(g => new
-                            {
-                                Date = g.Key,
-                                Grade = g.First().Student.Grade,
-                                PresentCount = g.Count(a => a.IsPresent),
-                                AbsentCount = g.Count(a => !a.IsPresent)
-                            })
-                            .ToList();
+                            .Count();
 
-                        ViewBag.RecentClasses = teacherClasses;
-                        ViewBag.TotalStudents = teacherClasses.Sum(c => c.PresentCount + c.AbsentCount);
-                        ViewBag.TotalClasses = teacherClasses.Count;
-                        ViewBag.AverageAttendance = teacherClasses.Any() 
-                            ? Math.Round(teacherClasses.Average(c => (double)c.PresentCount / (c.PresentCount + c.AbsentCount) * 100), 1)
-                            : 0;
+                        ViewBag.TotalClasses = totalClasses;
+                        ViewBag.TeacherName = teacher.FullName;
+                        ViewBag.SubjectName = teacher.Subject?.Name ?? "غير محدد";
+                        ViewBag.Email = teacher.Email;
+                        ViewBag.PhoneNumber = teacher.PhoneNumber;
 
                         return View("TeacherDashboard", teacher);
                     }

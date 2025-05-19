@@ -11,13 +11,22 @@
             <div class="card shadow mb-4">
                 <div class="card-body text-center">
                     <div class="mb-4">
-                        <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <img src="@Model.ImagePath" alt="@Model.FullName" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                        }
                     </div>
                     <h3 class="card-title mb-3">@Model.FullName</h3>
-                    <p class="text-muted mb-3">@Model.Subject</p>
+                    <p class="text-muted mb-3">@(Model.Subject?.Name ?? "غير محدد")</p>
                     <div class="text-start">
                         <p class="mb-2"><i class="bi bi-envelope me-2"></i> @Model.Email</p>
                         <p class="mb-2"><i class="bi bi-telephone me-2"></i> @Model.PhoneNumber</p>
+                        <p class="mb-2"><i class="bi bi-gender-ambiguous me-2"></i> @Model.Gender</p>
+                        <p class="mb-2"><i class="bi bi-calendar me-2"></i> @Model.DateOfBirth.ToString("dd/MM/yyyy")</p>
                     </div>
                 </div>
             </div>
@@ -26,16 +35,6 @@
         <!-- Statistics Cards -->
         <div class="col-md-8">
             <div class="row">
-                <!-- Total Students Card -->
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow h-100">
-                        <div class="card-body text-center">
-                            <h3 class="text-primary">@ViewBag.TotalStudents</h3>
-                            <p class="text-muted">إجمالي الطلاب</p>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Total Classes Card -->
                 <div class="col-md-6 mb-4">
                     <div class="card shadow h-100">
@@ -46,45 +45,39 @@
                     </div>
                 </div>
 
-                <!-- Average Attendance Card -->
+                <!-- Subject Card -->
                 <div class="col-md-6 mb-4">
                     <div class="card shadow h-100">
                         <div class="card-body text-center">
-                            <h3 class="text-info">@ViewBag.AverageAttendance%</h3>
-                            <p class="text-muted">متوسط نسبة الحضور</p>
+                            <h3 class="text-primary">@(Model.Subject?.Name ?? "غير محدد")</h3>
+                            <p class="text-muted">المادة الدراسية</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Classes Table -->
+            <!-- Quick Actions -->
             <div class="card shadow mt-4">
                 <div class="card-header bg-light">
-                    <h5 class="card-title mb-0">آخر الحصص</h5>
+                    <h5 class="card-title mb-0">إجراءات سريعة</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>التاريخ</th>
-                                    <th>الصف</th>
-                                    <th>الحضور</th>
-                                    <th>الغياب</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var classRecord in ViewBag.RecentClasses ?? new List<dynamic>())
-                                {
-                                    <tr>
-                                        <td>@classRecord.Date.ToString("dd/MM/yyyy")</td>
-                                        <td>@classRecord.Grade</td>
-                                        <td><span class="badge bg-success">@classRecord.PresentCount</span></td>
-                                        <td><span class="badge bg-danger">@classRecord.AbsentCount</span></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-primary w-100">
+                                <i class="bi bi-calendar-check me-2"></i> تسجيل الحضور
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-success w-100">
+                                <i class="bi bi-journal-text me-2"></i> إضافة واجب
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-info w-100">
+                                <i class="bi bi-pencil-square me-2"></i> تعديل الملف الشخصي
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
