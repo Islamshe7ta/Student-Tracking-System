@@ -27,14 +27,14 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
 
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> ShowForTeacher_Admin()
         {
 
             return View();
         }
 
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Grades = await _context.Grades
@@ -56,8 +56,113 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View();
         }
 
+        #region MyRegion
+
+        [HttpGet]
+        [Authorize(Roles = "Teatcher,Admin")]
+        public async Task<IActionResult> GetAllQuizzes()
+        {
+            var allQuizzes = await _context.Quizzes
+                .Include(q => q.Grade)
+                .Include(q => q.Subject)
+                .Include(q => q.Teacher)
+                .Include(q => q.Questions)
+                .OrderByDescending(q => q.Id)
+                .Select(q => new QuizDetailsDTO
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    Grade = q.Grade!.Name,
+                    Subject = q.Subject!.Name,
+                    TotalMarks = q.TotalMarks,
+                    StartTime = q.StartTime,
+                    EndTime = q.EndTime,
+                    IsActive = q.IsActive,
+                    TeacherName = q.Teacher!.UserName ?? string.Empty,
+                    // يمكنك إضافة معلومات أخرى حسب الحاجة
+                })
+                .ToListAsync();
+
+            return View(allQuizzes);
+        }
+
+        // إذا كنت تريد إرجاع البيانات كـ JSON للـ API
+        [HttpGet]
+        [Authorize(Roles = "Teatcher,Admin")]
+        public async Task<IActionResult> GetAllQuizzesJson()
+        {
+            var allQuizzes = await _context.Quizzes
+                .Include(q => q.Grade)
+                .Include(q => q.Subject)
+                .Include(q => q.Teacher)
+                .Include(q => q.Questions)
+                .OrderByDescending(q => q.Id)
+                .Select(q => new
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    Grade = q.Grade!.Name,
+                    Subject = q.Subject!.Name,
+                    TotalMarks = q.TotalMarks,
+                    StartTime = q.StartTime,
+                    EndTime = q.EndTime,
+                    IsActive = q.IsActive,
+                    TeacherName = q.Teacher!.UserName ?? string.Empty,
+                    QuestionsCount = q.Questions.Count(),
+                    SubmissionsCount = _context.StudentQuizSubmissions.Count(s => s.QuizId == q.Id)
+                })
+                .ToListAsync();
+
+            return Json(allQuizzes);
+        }
+
+        // إذا كنت تريد إضافة فلترة حسب المعايير المختلفة
+        [HttpGet]
+        [Authorize(Roles = "Teatcher,Admin")]
+        public async Task<IActionResult> GetFilteredQuizzes(int? gradeId = null, int? subjectId = null, bool? isActive = null)
+        {
+            var query = _context.Quizzes
+                .Include(q => q.Grade)
+                .Include(q => q.Subject)
+                .Include(q => q.Teacher)
+                .Include(q => q.Questions)
+                .AsQueryable();
+
+            // تطبيق الفلاتر
+            if (gradeId.HasValue)
+                query = query.Where(q => q.GradeId == gradeId.Value);
+
+            if (subjectId.HasValue)
+                query = query.Where(q => q.SubjectId == subjectId.Value);
+
+            if (isActive.HasValue)
+                query = query.Where(q => q.IsActive == isActive.Value);
+
+            var filteredQuizzes = await query
+                .OrderByDescending(q => q.Id)
+                .Select(q => new QuizDetailsDTO
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    Grade = q.Grade!.Name,
+                    Subject = q.Subject!.Name,
+                    TotalMarks = q.TotalMarks,
+                    StartTime = q.StartTime,
+                    EndTime = q.EndTime,
+                    IsActive = q.IsActive,
+                    TeacherName = q.Teacher!.UserName ?? string.Empty,
+                })
+                .ToListAsync();
+
+            return View(filteredQuizzes);
+        }
+        #endregion
+
+
+
+
         [HttpPost]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Create(CreateQuizDTO model)
         {
             if (!ModelState.IsValid)
@@ -173,7 +278,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var quiz = await _context.Quizzes.FindAsync(id);
@@ -189,7 +294,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Submissions(int id)
         {
             var submissions = await _context.StudentQuizSubmissions
@@ -214,7 +319,7 @@ namespace StudentTrackingSystem.Pl.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher,Admin")]
+        [Authorize(Roles = "Teatcher,Admin")]
         public async Task<IActionResult> Grade(int submissionId, int marks)
         {
             var submission = await _context.StudentQuizSubmissions.FindAsync(submissionId);
@@ -230,7 +335,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return RedirectToAction(nameof(Submissions), new { id = submission.QuizId });
         }
 
-        [Authorize(Roles = "Student,Teacher,Admin")]
+        [Authorize(Roles = "Student,Teatcher,Admin")]
         public async Task<IActionResult> StudentQuizzes()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -260,7 +365,7 @@ namespace StudentTrackingSystem.Pl.Controllers
             return View(availableQuizzes);
         }
 
-        [Authorize(Roles = "Student,Teacher,Admin")]
+        [Authorize(Roles = "Student,Teatcher,Admin")]
         public async Task<IActionResult> StudentResults()
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
